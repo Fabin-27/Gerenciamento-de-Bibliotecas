@@ -56,10 +56,33 @@ public class Cliente_Dao {
                                   rs.getString("telefone"),
                                   rs.getString("endereco"));
             }
-        } catch (SQLException e) {
+            
+			System.out.println();
+			System.out.println();
+			System.out.println();
+        } 
+        catch (SQLException e) {
             e.printStackTrace();
         }
     }
+	
+	public static boolean deletarCliente(int id) {
+		
+		String sql = "DELETE FROM Clientes WHERE id = ?";
+
+	    try (Connection conn = DB.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+	        stmt.setInt(1, id);
+
+	        int rowsDeleted = stmt.executeUpdate();
+	        return rowsDeleted > 0;
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        return false;
+	    }
+		
+	}
 	
 	
 
