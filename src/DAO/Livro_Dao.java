@@ -2,6 +2,7 @@ package DAO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import db.DB;
@@ -28,6 +29,30 @@ public class Livro_Dao {
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;
+		}
+
+	}
+
+	public void listarLivros() {
+
+		String sql = "SELECT * FROM Livros";
+
+		try (Connection conn = DB.getConnection();
+				PreparedStatement stmt = conn.prepareStatement(sql);
+				ResultSet rs = stmt.executeQuery()) {
+
+			System.out.printf("%-5s %-20s %-15s %-30s %-15s%n", "ID", "Titulo", "Autor", "ISBN", "Ano");
+			System.out.println("-------------------------------------------------------------------------------");
+
+			while (rs.next()) {
+
+				System.out.printf("%-5d %-20s %-15s %-30s %-15s%n", rs.getInt("id"), rs.getString("titulo"),
+						rs.getString("autor"), rs.getString("ISBN"), rs.getString("anoPublicacao"));
+
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 
 	}

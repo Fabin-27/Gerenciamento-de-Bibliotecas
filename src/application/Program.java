@@ -12,28 +12,25 @@ public class Program {
 
 	static Scanner sc = new Scanner(System.in);
 	static Cliente_Dao clienteDAO = new Cliente_Dao();
+	static Livro_Dao livroDAO = new Livro_Dao();
 
 	public static void main(String[] args) {
 
 		imprimirCabecalho();
 		opções_switch();
 
-		
-		
-
-		
 	}
-	
+
 	public static void opções_switch() {
 		int x = sc.nextInt();
 
 		switch (x) {
-		
+
 		case 0:
-			
+
 			System.out.println("Saindo do sistema...");
 			System.exit(0);
-			
+
 			break;
 
 		case 1:
@@ -50,7 +47,15 @@ public class Program {
 
 		case 3:
 			InserirLivro();
+
+			break;
+
+		case 4:
+
+			livroDAO.listarLivros();
 			
+			break;
+
 		default:
 			System.out.println("Opção inválida. Tente novamente.");
 
@@ -66,7 +71,8 @@ public class Program {
 		System.out.println();
 		System.out.println("1. Inserir Cliente");
 		System.out.println("2. Listar Clientes");
-		System.out.println("3. Inserir Livros");
+		System.out.println("3. Inserir Livro");
+		System.out.println("4. Listar Livros");
 		System.out.println("0. Sair");
 		System.out.println();
 	}
@@ -95,9 +101,9 @@ public class Program {
 			System.out.println("Falha ao inserir o cliente.");
 		}
 	}
-	
+
 	public static void InserirLivro() {
-		
+
 		System.out.print("Digite o titulo: ");
 		String titulo = sc.nextLine();
 
@@ -109,14 +115,14 @@ public class Program {
 
 		System.out.print("Digite o ano de publicação: ");
 		String anoPublicacao = sc.nextLine();
-		
+
 		boolean inserido = Livro_Dao.inserirLivro(titulo, autor, isbn, anoPublicacao);
 		if (inserido) {
 			System.out.println("Livro inserido com sucesso");
-		}else {
+		} else {
 			System.out.println("Falha ao inserir o cliente.");
 		}
-		
+
 	}
 
 	public static void TestarConexão() {
