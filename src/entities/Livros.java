@@ -1,17 +1,27 @@
 package entities;
 
 public class Livros {
+	private int id;
     private String titulo;
     private String autor;
     private String isbn;
-    private int anoPublicacao;
+    private String anoPublicacao;
 
-    public Livros(String titulo, String autor, String isbn, int anoPublicacao) {
+    public Livros(int id, String titulo, String autor, String isbn, String anoPublicacao) {
+    	this.setId(id);
         this.titulo = titulo;
         this.autor = autor;
         this.isbn = isbn;
         this.anoPublicacao = anoPublicacao;
     }
+    
+    public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
 
     public String getTitulo() {
         return titulo;
@@ -37,11 +47,11 @@ public class Livros {
         this.isbn = isbn;
     }
 
-    public int getAnoPublicacao() {
+    public String getAnoPublicacao() {
         return anoPublicacao;
     }
 
-    public void setAnoPublicacao(int anoPublicacao) {
+    public void setAnoPublicacao(String anoPublicacao) {
         this.anoPublicacao = anoPublicacao;
     }
 
