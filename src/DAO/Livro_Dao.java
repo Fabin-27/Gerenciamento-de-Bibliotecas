@@ -4,8 +4,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import db.DB;
+import entities.Livros;
 
 public class Livro_Dao {
 
@@ -78,6 +81,70 @@ public class Livro_Dao {
 	        return false;
 	    }
 	}
+	
+	public static boolean editarLivro(int id, String titulo, String autor, String isbn, String anoPublicacao) {
+	    String sql = "UPDATE Livros SET titulo = ?, autor = ?, isbn = ?, anoPublicacao = ? WHERE id = ?";
+
+	    try (Connection conn = DB.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+	        stmt.setString(1, titulo);
+	        stmt.setString(2, autor);
+	        stmt.setString(3, isbn);
+	        stmt.setString(4, anoPublicacao);
+	        stmt.setInt(5, id);
+
+	        int rowsUpdated = stmt.executeUpdate();
+	        return rowsUpdated > 0;
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        return false;
+	    }
+	}
+	
+	public static Livros buscarLivroPorId(int id) {
+	    String sql = "SELECT * FROM Livros WHERE id = ?";
+	    Livros livro = null;
+
+	    try (Connection conn = DB.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+	        stmt.setInt(1, id);
+	        try (ResultSet rs = stmt.executeQuery()) {
+	            if (rs.next()) {
+	                livro = new Livros(
+	                    rs.getInt("id"),
+	                    rs.getString("titulo"),
+	                    rs.getString("autor"),
+	                    rs.getString("isbn"),
+	                    rs.getString("anoPublicacao")
+	                );
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return livro;
+	}
+	
+	public static List<Livros> buscarLivrosPorTitulo(String titulo) {
+		String sql = "SELECT * FROM Livros WHERE titulo LIKE ?";
+		List<Livros> livros = new ArrayList<>();
+
+		try (Connection conn = DB.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+			stmt.setString(1, "%" + titulo + "%");
+			try (ResultSet rs = stmt.executeQuery()) {
+				while (rs.next()) {
+					Livros livro = new Livros(rs.getInt("id"), rs.getString("titulo"), rs.getString("autor"),
+							rs.getString("isbn"), rs.getString("anoPublicacao"));
+					livros.add(livro);
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return livros;
+	}
+
+
 
 
 }

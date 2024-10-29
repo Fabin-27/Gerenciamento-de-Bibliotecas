@@ -4,8 +4,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import db.DB;
+import entities.Clientes;
 
 public class Cliente_Dao {
 
@@ -83,6 +86,74 @@ public class Cliente_Dao {
 	    }
 		
 	}
+	
+	public static boolean editarCliente(int id, String nome, String cpf, String email, String telefone, String endereco) {
+		
+		String sql = "UPDATE clientes SET nome = ?, cpf = ?, email = ?, telefone = ?, endereco = ? WHERE id = ?";
+		
+		try(Connection conn = DB.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)){
+			
+			stmt.setString(1, nome);
+	        stmt.setString(2, cpf);
+	        stmt.setString(3, email);
+	        stmt.setString(4, telefone);
+	        stmt.setString(5, endereco);
+	        stmt.setInt(6, id);
+			
+			int rowsUpdated = stmt.executeUpdate();
+			return rowsUpdated > 0;
+			
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+	}
+	
+	public static Clientes buscarClientePorId(int id) {
+	    String sql = "SELECT * FROM Clientes WHERE id = ?";
+	    Clientes cliente = null;
+
+	    try (Connection conn = DB.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+	        stmt.setInt(1, id);
+	        try (ResultSet rs = stmt.executeQuery()) {
+	            if (rs.next()) {
+	                cliente = new Clientes(
+	                    rs.getInt("id"),
+	                    rs.getString("nome"),
+	                    rs.getString("cpf"),
+	                    rs.getString("email"),
+	                    rs.getString("telefone"),
+	                    rs.getString("endereco")
+	                );
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return cliente;
+	}
+	
+	public static List<Clientes> buscarClientesPorNome(String nome) {
+		String sql = "SELECT * FROM Clientes WHERE nome LIKE ?";
+		List<Clientes> clientes = new ArrayList<>();
+
+		try (Connection conn = DB.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+			stmt.setString(1, "%" + nome + "%");
+			try (ResultSet rs = stmt.executeQuery()) {
+				while (rs.next()) {
+					Clientes cliente = new Clientes(rs.getInt("id"), rs.getString("nome"), rs.getString("cpf"),
+							rs.getString("email"), rs.getString("telefone"), rs.getString("endereco"));
+					clientes.add(cliente);
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return clientes;
+	}
+
 	
 	
 

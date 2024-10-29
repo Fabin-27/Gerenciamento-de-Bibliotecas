@@ -66,6 +66,17 @@ public class Clientes {
 		Endereco = endereco;
 	}
 	
+	@Override
+	public String toString() {
+	    return "ID: " + Id 
+	           + ", Nome: " + Nome 
+	           + ", CPF: " + Cpf 
+	           + ", Email: " + Email 
+	           + ", Telefone: " + Telefone 
+	           + ", Endereço: " + Endereco;
+	}
+
+	
 	
     
     
