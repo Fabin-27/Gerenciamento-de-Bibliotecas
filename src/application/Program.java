@@ -1,7 +1,5 @@
 package application;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -11,6 +9,7 @@ import db.DB;
 import entities.Clientes;
 import entities.Livros;
 
+@SuppressWarnings("unused")
 public class Program {
 
 	static Scanner sc = new Scanner(System.in);
@@ -19,8 +18,22 @@ public class Program {
 
 	public static void main(String[] args) {
 
-		imprimirCabecalho();
+		// DB.TestarConexão();
+		Cabecalho_Principal();
 
+	}
+
+	public static void Cabecalho_Principal() {
+		System.out.println("=============================================");
+		System.out.println("           Sistema de Gerenciamento           ");
+		System.out.println("                de Biblioteca                     ");
+		System.out.println("=============================================");
+		System.out.println();
+		System.out.println("1. Área de Clientes");
+		System.out.println("2. Área de Livros");
+		System.out.println("0. Sair");
+		System.out.println();
+		switch_inicial();
 	}
 
 	public static void switch_inicial() {
@@ -31,123 +44,32 @@ public class Program {
 
 		case 0:
 
-			System.out.println("Saindo do sistema...");
+			System.out.println("Até a próxima :)");
 			System.exit(0);
 
 			break;
 
 		case 1:
 
+			cabecalho_clientes();
 			opções_switch_cliente();
 
 			break;
 
 		case 2:
 
+			cabecalho_Livros();
 			opções_switch_livro();
 
 			break;
 		}
 
 	}
-
-	public static void opções_switch_livro() {
-		
-		System.out.println("=============================================");
-		System.out.println("           Área de Gerenciamento           ");
-		System.out.println("                de Livros                     ");
-		System.out.println("=============================================");
-		System.out.println();
-		System.out.println("1. Inserir Livro");
-		System.out.println("2. Listar Livros");
-		System.out.println("3. Deletar Livro");
-		System.out.println("4. Editar Livro");
-		System.out.println("5. Buscar Livro");
-		System.out.println();
-		
-		int x = sc.nextInt();
-
-		switch (x) {
-
-		case 0:
-
-			System.out.println("Saindo do sistema...");
-			System.exit(0);
-
-			break;
-
-		case 1:
-
-			InserirLivro();
-
-			break;
-
-		case 2:
-
-			livroDAO.listarLivros();
-
-			System.out.println("Digite '9' para voltar para a área de Gerenciamento de livros");
-			
-			int z = sc.nextInt();
-
-			while (z != 9) {
-
-				System.out.println("Comando inválido");
-				System.out.println("Digite '9' para voltar para a área de Gerenciamento de livros");
-				z = sc.nextInt();
-			}
-
-			opções_switch_livro();
-
-			break;
-
-		case 3:
-
-			deletarLivroPorId();
-
-			break;
-
-		case 4:
-
-			editarLivroPorId();
-
-			break;
-
-		case 5:
-
-			System.out.println("1. Buscar Livro por Id");
-			System.out.println("2. Buscar Livro por Titulo");
-
-			int opção_buscar = sc.nextInt();
-
-			switch (opção_buscar) {
-
-			case 1:
-
-				buscarLivroPorId();
-
-				break;
-
-			case 2:
-
-				buscarLivroPorTitulo();
-
-				break;
-
-			default:
-				System.out.println("Opção inválida. Tente novamente.");
-
-			}
-
-			break;
-
-		default:
-			System.out.println("Opção inválida. Tente novamente.");
-		}
-
-	}
-
-	public static void opções_switch_cliente() {
+	
+	
+	// ÁREA CLIENTES
+	
+	public static void cabecalho_clientes() {
 		
 		System.out.println("=============================================");
 		System.out.println("           Área de Gerenciamento           ");
@@ -159,8 +81,14 @@ public class Program {
 		System.out.println("3. Deletar Cliente");
 		System.out.println("4. Editar Cliente");
 		System.out.println("5. Buscar Cliente");
+		System.out.println("6. Voltar");
+		System.out.println("0. Sair");
 		System.out.println();
 		
+	}
+	
+	public static void opções_switch_cliente() {
+
 		int x = sc.nextInt();
 
 		switch (x) {
@@ -235,25 +163,18 @@ public class Program {
 			}
 
 			break;
+			
+		case 6:
+
+			Cabecalho_Principal();
+			switch_inicial();
+
+			break;
 
 		default:
 			System.out.println("Opção inválida. Tente novamente.");
 		}
 
-		sc.close();
-	}
-
-	public static void imprimirCabecalho() {
-		System.out.println("=============================================");
-		System.out.println("           Sistema de Gerenciamento           ");
-		System.out.println("                de Biblioteca                     ");
-		System.out.println("=============================================");
-		System.out.println();
-		System.out.println("1. Área de Clientes");
-		System.out.println("2. Área de Livros");
-		System.out.println("0. Sair");
-		System.out.println();
-		switch_inicial();
 	}
 
 	public static void buscarClientePorNome() {
@@ -273,97 +194,12 @@ public class Program {
 		}
 	}
 
-	public static void buscarLivroPorTitulo() {
-		System.out.print("Digite o título do livro que deseja buscar: ");
-		sc.nextLine();
-		String titulo = sc.nextLine();
-
-		List<Livros> livrosEncontrados = Livro_Dao.buscarLivrosPorTitulo(titulo);
-
-		if (!livrosEncontrados.isEmpty()) {
-			System.out.println("Livros encontrados:");
-			for (Livros livro : livrosEncontrados) {
-				System.out.println(livro);
-			}
-
-			System.out.println();
-			System.out.println();
-			System.out.println();
-			System.out.println("Deseja fazer uma nova tentativa? (Digite 'sim' ou 'nao')");
-
-			String resposta_busca = sc.nextLine();
-
-			while (resposta_busca.equalsIgnoreCase("sim")) {
-
-				buscarLivroPorTitulo();
-
-				System.out.println();
-				System.out.println();
-				System.out.println();
-
-				if (resposta_busca.equalsIgnoreCase("nao")) {
-
-					System.out.println("=============================================");
-					System.out.println("           Área de Gerenciamento           ");
-					System.out.println("                de Livros                     ");
-					System.out.println("=============================================");
-					System.out.println();
-					System.out.println("1. Inserir Livro");
-					System.out.println("2. Listar Livros");
-					System.out.println("3. Deletar Livro");
-					System.out.println("4. Editar Livro");
-					System.out.println("5. Buscar Livro");
-					System.out.println();
-
-					opções_switch_livro();
-
-				}
-			}
-		} else {
-			System.out.println("Nenhum livro encontrado com o título especificado.");
-
-			System.out.println();
-			System.out.println();
-			System.out.println();
-			System.out.println("Deseja fazer uma nova tentativa? (Digite 'sim' ou 'nao')");
-
-			String resposta_busca = sc.nextLine();
-
-			while (resposta_busca.equalsIgnoreCase("sim")) {
-
-				buscarLivroPorTitulo();
-
-				System.out.println();
-				System.out.println();
-				System.out.println();
-
-				if (resposta_busca.equalsIgnoreCase("nao")) {
-
-					System.out.println("=============================================");
-					System.out.println("           Área de Gerenciamento           ");
-					System.out.println("                de Livros                     ");
-					System.out.println("=============================================");
-					System.out.println();
-					System.out.println("1. Inserir Livro");
-					System.out.println("2. Listar Livros");
-					System.out.println("3. Deletar Livro");
-					System.out.println("4. Editar Livro");
-					System.out.println("5. Buscar Livro");
-					System.out.println();
-
-					opções_switch_livro();
-
-				}
-			}
-		}
-	}
-
 	public static void buscarClientePorId() {
 		System.out.print("Digite o ID do cliente que deseja buscar (ou 'cancelar' para sair): ");
 		String valor_id = sc.nextLine();
 
 		if (valor_id.equalsIgnoreCase("cancelar")) {
-			imprimirCabecalho();
+			Cabecalho_Principal();
 			return;
 		}
 
@@ -381,103 +217,12 @@ public class Program {
 		}
 	}
 
-	public static void buscarLivroPorId() {
-		System.out.print("Digite o ID do livro que deseja buscar (ou 'cancelar' para sair): ");
-		String valor_id = sc.nextLine();
-
-		if (valor_id.equalsIgnoreCase("cancelar")) {
-			imprimirCabecalho();
-			return;
-		}
-
-		try {
-			int id = Integer.parseInt(valor_id);
-			Livros livro = Livro_Dao.buscarLivroPorId(id);
-
-			if (livro != null) {
-				System.out.println("Livro encontrado: " + livro);
-
-				System.out.println();
-				System.out.println();
-				System.out.println();
-				System.out.println("Deseja fazer uma nova tentativa? (Digite 'sim' ou 'nao')");
-
-				String resposta_busca = sc.nextLine();
-
-				while (resposta_busca.equalsIgnoreCase("sim")) {
-
-					buscarLivroPorId();
-
-					System.out.println();
-					System.out.println();
-					System.out.println();
-
-					if (resposta_busca.equalsIgnoreCase("nao")) {
-
-						System.out.println("=============================================");
-						System.out.println("           Área de Gerenciamento           ");
-						System.out.println("                de Livros                     ");
-						System.out.println("=============================================");
-						System.out.println();
-						System.out.println("1. Inserir Livro");
-						System.out.println("2. Listar Livros");
-						System.out.println("3. Deletar Livro");
-						System.out.println("4. Editar Livro");
-						System.out.println("5. Buscar Livro");
-						System.out.println();
-
-						opções_switch_livro();
-
-					}
-				}
-			} else {
-				System.out.println("Livro com o ID especificado não encontrado.");
-
-				System.out.println();
-				System.out.println();
-				System.out.println();
-				System.out.println("Deseja fazer uma nova tentativa? (Digite 'sim' ou 'nao')");
-
-				String resposta_busca = sc.nextLine();
-
-				while (resposta_busca.equalsIgnoreCase("sim")) {
-
-					buscarLivroPorId();
-
-					System.out.println();
-					System.out.println();
-					System.out.println();
-
-					if (resposta_busca.equalsIgnoreCase("nao")) {
-
-						System.out.println("=============================================");
-						System.out.println("           Área de Gerenciamento           ");
-						System.out.println("                de Livros                     ");
-						System.out.println("=============================================");
-						System.out.println();
-						System.out.println("1. Inserir Livro");
-						System.out.println("2. Listar Livros");
-						System.out.println("3. Deletar Livro");
-						System.out.println("4. Editar Livro");
-						System.out.println("5. Buscar Livro");
-						System.out.println();
-
-						opções_switch_livro();
-
-					}
-				}
-			}
-		} catch (NumberFormatException e) {
-			System.out.println("ID inválido. Por favor, insira um número.");
-		}
-	}
-
 	public static void editarClientePorId() {
 		System.out.print("Digite o ID do cliente que deseja editar (ou 'cancelar' para sair): ");
 		String valor_id = sc.nextLine();
 
 		if (valor_id.equalsIgnoreCase("cancelar")) {
-			imprimirCabecalho();
+			Cabecalho_Principal();
 			return;
 		}
 
@@ -487,35 +232,35 @@ public class Program {
 			System.out.print("Digite o novo nome (ou 'cancelar' para sair): ");
 			String nome = sc.nextLine();
 			if (nome.equalsIgnoreCase("cancelar")) {
-				imprimirCabecalho();
+				Cabecalho_Principal();
 				return;
 			}
 
 			System.out.print("Digite o novo CPF (ou 'cancelar' para sair): ");
 			String cpf = sc.nextLine();
 			if (cpf.equalsIgnoreCase("cancelar")) {
-				imprimirCabecalho();
+				Cabecalho_Principal();
 				return;
 			}
 
 			System.out.print("Digite o novo email (ou 'cancelar' para sair): ");
 			String email = sc.nextLine();
 			if (email.equalsIgnoreCase("cancelar")) {
-				imprimirCabecalho();
+				Cabecalho_Principal();
 				return;
 			}
 
 			System.out.print("Digite o novo telefone (ou 'cancelar' para sair): ");
 			String telefone = sc.nextLine();
 			if (telefone.equalsIgnoreCase("cancelar")) {
-				imprimirCabecalho();
+				Cabecalho_Principal();
 				return;
 			}
 
 			System.out.print("Digite o novo endereço (ou 'cancelar' para sair): ");
 			String endereco = sc.nextLine();
 			if (endereco.equalsIgnoreCase("cancelar")) {
-				imprimirCabecalho();
+				Cabecalho_Principal();
 				return;
 			}
 
@@ -523,96 +268,9 @@ public class Program {
 
 			if (editado) {
 				System.out.println("Cliente editado com sucesso!");
-				imprimirCabecalho();
+				Cabecalho_Principal();
 			} else {
 				System.out.println("Cliente com o ID especificado não encontrado.");
-			}
-		} catch (NumberFormatException e) {
-			System.out.println("ID inválido. Por favor, insira um número.");
-		}
-	}
-
-	public static void editarLivroPorId() {
-		System.out.print("Digite o ID do livro que deseja editar (ou 'cancelar' para sair): ");
-		String valor_id = sc.nextLine();
-
-		if (valor_id.equalsIgnoreCase("cancelar")) {
-			imprimirCabecalho();
-		}
-
-		try {
-			int id = Integer.parseInt(valor_id);
-
-			System.out.print("Digite o novo título (ou 'cancelar' para sair): ");
-			String titulo = sc.nextLine();
-			if (titulo.equalsIgnoreCase("cancelar")) {
-				imprimirCabecalho();
-				return;
-			}
-
-			System.out.print("Digite o novo autor (ou 'cancelar' para sair): ");
-			String autor = sc.nextLine();
-			if (autor.equalsIgnoreCase("cancelar")) {
-				imprimirCabecalho();
-				return;
-			}
-
-			System.out.print("Digite o novo ISBN (ou 'cancelar' para sair): ");
-			String isbn = sc.nextLine();
-			if (isbn.equalsIgnoreCase("cancelar")) {
-				imprimirCabecalho();
-				return;
-			}
-
-			System.out.print("Digite o novo ano de publicação (ou 'cancelar' para sair): ");
-			String anoPublicacao = sc.nextLine();
-			if (anoPublicacao.equalsIgnoreCase("cancelar")) {
-				imprimirCabecalho();
-				return;
-			}
-
-			boolean editado = Livro_Dao.editarLivro(id, titulo, autor, isbn, anoPublicacao);
-
-			if (editado) {
-				System.out.println("Livro editado com sucesso!");
-				imprimirCabecalho();
-			} else {
-				System.out.println("Livro com o ID especificado não encontrado.");
-
-				System.out.println();
-				System.out.println();
-				System.out.println();
-				System.out.println("Deseja fazer uma nova tentativa? (Digite 'sim' ou 'nao')");
-
-				String resposta_busca = sc.nextLine();
-
-				while (resposta_busca.equalsIgnoreCase("sim")) {
-
-					editarLivroPorId();
-
-					System.out.println();
-					System.out.println();
-					System.out.println();
-
-					if (resposta_busca.equalsIgnoreCase("nao")) {
-
-						System.out.println("=============================================");
-						System.out.println("           Área de Gerenciamento           ");
-						System.out.println("                de Livros                     ");
-						System.out.println("=============================================");
-						System.out.println();
-						System.out.println("1. Inserir Livro");
-						System.out.println("2. Listar Livros");
-						System.out.println("3. Deletar Livro");
-						System.out.println("4. Editar Livro");
-						System.out.println("5. Buscar Livro");
-						System.out.println();
-
-						opções_switch_livro();
-
-					}
-				}
-
 			}
 		} catch (NumberFormatException e) {
 			System.out.println("ID inválido. Por favor, insira um número.");
@@ -625,7 +283,7 @@ public class Program {
 		String valor_id = sc.nextLine();
 
 		if (valor_id.equalsIgnoreCase("cancelar")) {
-			imprimirCabecalho();
+			Cabecalho_Principal();
 			return;
 		}
 
@@ -635,68 +293,9 @@ public class Program {
 
 			if (deletado) {
 				System.out.println("Cliente deletado com sucesso!");
-				imprimirCabecalho();
+				Cabecalho_Principal();
 			} else {
 				System.out.println("Cliente com o ID especificado não encontrado.");
-			}
-		} catch (NumberFormatException e) {
-			System.out.println("ID inválido. Por favor, insira um número.");
-		}
-	}
-
-	public static void deletarLivroPorId() {
-		System.out.print("Digite o ID do livro que deseja deletar (ou 'cancelar' para sair): ");
-		sc.nextLine();
-		String valor_id = sc.nextLine();
-
-		if (valor_id.equalsIgnoreCase("cancelar")) {
-			imprimirCabecalho();
-			return;
-		}
-
-		try {
-			int id = Integer.parseInt(valor_id);
-			boolean deletado = Livro_Dao.deletarLivro(id);
-
-			if (deletado) {
-				System.out.println("Livro deletado com sucesso!");
-				imprimirCabecalho();
-			} else {
-				System.out.println("Livro com o ID especificado não encontrado.");
-
-				System.out.println();
-				System.out.println();
-				System.out.println();
-				System.out.println("Deseja fazer uma nova tentativa? (Digite 'sim' ou 'nao')");
-
-				String resposta_busca = sc.nextLine();
-
-				while (resposta_busca.equalsIgnoreCase("sim")) {
-
-					deletarLivroPorId();
-
-					System.out.println();
-					System.out.println();
-					System.out.println();
-
-					if (resposta_busca.equalsIgnoreCase("nao")) {
-
-						System.out.println("=============================================");
-						System.out.println("           Área de Gerenciamento           ");
-						System.out.println("                de Livros                     ");
-						System.out.println("=============================================");
-						System.out.println();
-						System.out.println("1. Inserir Livro");
-						System.out.println("2. Listar Livros");
-						System.out.println("3. Deletar Livro");
-						System.out.println("4. Editar Livro");
-						System.out.println("5. Buscar Livro");
-						System.out.println();
-
-						opções_switch_livro();
-
-					}
-				}
 			}
 		} catch (NumberFormatException e) {
 			System.out.println("ID inválido. Por favor, insira um número.");
@@ -710,45 +309,159 @@ public class Program {
 		String nome = sc.nextLine();
 		if (nome.equalsIgnoreCase("cancelar")) {
 			System.out.println("Operação cancelada.");
-			imprimirCabecalho();
+			Cabecalho_Principal();
 		}
 
 		System.out.print("Digite o CPF do cliente (ou 'cancelar' para sair): ");
 		String cpf = sc.nextLine();
 		if (cpf.equalsIgnoreCase("cancelar")) {
 			System.out.println("Operação cancelada.");
-			imprimirCabecalho();
+			Cabecalho_Principal();
 		}
 
 		System.out.print("Digite o email do cliente (ou 'cancelar' para sair): ");
 		String email = sc.nextLine();
 		if (email.equalsIgnoreCase("cancelar")) {
 			System.out.println("Operação cancelada.");
-			imprimirCabecalho();
+			Cabecalho_Principal();
 		}
 
 		System.out.print("Digite o telefone do cliente (ou 'cancelar' para sair): ");
 		String telefone = sc.nextLine();
 		if (telefone.equalsIgnoreCase("cancelar")) {
 			System.out.println("Operação cancelada.");
-			imprimirCabecalho();
+			Cabecalho_Principal();
 		}
 
 		System.out.print("Digite o endereço do cliente (ou 'cancelar' para sair): ");
 		String endereco = sc.nextLine();
 		if (endereco.equalsIgnoreCase("cancelar")) {
 			System.out.println("Operação cancelada.");
-			imprimirCabecalho();
+			Cabecalho_Principal();
 		}
 
 		boolean inserido = Cliente_Dao.inserirCliente(nome, cpf, email, telefone, endereco);
 		if (inserido) {
 			System.out.println("Cliente inserido com sucesso!");
-			imprimirCabecalho();
+			Cabecalho_Principal();
 		} else {
 			System.out.println("Falha ao inserir o cliente.");
-			imprimirCabecalho();
+			Cabecalho_Principal();
 		}
+	}
+
+	
+	
+	
+	// ÁREA DOS LIVROS
+	public static void cabecalho_Livros() {
+
+		System.out.println("=============================================");
+		System.out.println("           Área de Gerenciamento           ");
+		System.out.println("                de Livros                     ");
+		System.out.println("=============================================");
+		System.out.println();
+		System.out.println("1. Inserir Livro");
+		System.out.println("2. Listar Livros");
+		System.out.println("3. Deletar Livro");
+		System.out.println("4. Editar Livro");
+		System.out.println("5. Buscar Livro");
+		System.out.println("6. Voltar");
+		System.out.println("0. Sair");
+		System.out.println();
+
+	}
+
+	public static void opções_switch_livro() {
+
+		int x = sc.nextInt();
+
+		switch (x) {
+
+		case 0:
+
+			System.out.println("Até a próxima :)");
+			System.exit(0);
+
+			break;
+
+		case 1:
+
+			InserirLivro();
+
+			break;
+
+		case 2:
+
+			livroDAO.listarLivros();
+
+			System.out.println("Digite '9' para voltar para a área de Gerenciamento de livros");
+
+			int z = sc.nextInt();
+
+			while (z != 9) {
+
+				System.out.println("Comando inválido");
+				System.out.println("Digite '9' para voltar para a área de Gerenciamento de livros");
+				z = sc.nextInt();
+			}
+
+			cabecalho_Livros();
+			opções_switch_livro();
+
+			break;
+
+		case 3:
+
+			deletarLivroPorId();
+
+			break;
+
+		case 4:
+
+			editarLivroPorId();
+
+			break;
+
+		case 5:
+
+			System.out.println("1. Buscar Livro por Id");
+			System.out.println("2. Buscar Livro por Titulo");
+
+			int opção_buscar = sc.nextInt();
+
+			switch (opção_buscar) {
+
+			case 1:
+
+				buscarLivroPorId();
+
+				break;
+
+			case 2:
+
+				buscarLivroPorTitulo();
+
+				break;
+
+			default:
+				System.out.println("Opção inválida. Tente novamente.");
+
+			}
+
+			break;
+
+		case 6:
+
+			Cabecalho_Principal();
+			switch_inicial();
+
+			break;
+
+		default:
+			System.out.println("Opção inválida. Tente novamente.");
+		}
+
 	}
 
 	public static void InserirLivro() {
@@ -757,28 +470,28 @@ public class Program {
 		sc.nextLine();
 		String titulo = sc.nextLine();
 		if (titulo.equalsIgnoreCase("cancelar")) {
-			imprimirCabecalho();
+			Cabecalho_Principal();
 
 		}
 
 		System.out.print("Digite o autor (ou 'cancelar' para sair): ");
 		String autor = sc.nextLine();
 		if (autor.equalsIgnoreCase("cancelar")) {
-			imprimirCabecalho();
+			Cabecalho_Principal();
 
 		}
 
 		System.out.print("Digite o ISBN (ou 'cancelar' para sair): ");
 		String isbn = sc.nextLine();
 		if (isbn.equalsIgnoreCase("cancelar")) {
-			imprimirCabecalho();
+			Cabecalho_Principal();
 
 		}
 
 		System.out.print("Digite o ano de publicação (ou 'cancelar' para sair): ");
 		String anoPublicacao = sc.nextLine();
 		if (anoPublicacao.equalsIgnoreCase("cancelar")) {
-			imprimirCabecalho();
+			Cabecalho_Principal();
 
 		}
 
@@ -803,23 +516,12 @@ public class Program {
 
 				if (resposta_busca.equalsIgnoreCase("nao")) {
 
-					System.out.println("=============================================");
-					System.out.println("           Área de Gerenciamento           ");
-					System.out.println("                de Livros                     ");
-					System.out.println("=============================================");
-					System.out.println();
-					System.out.println("1. Inserir Livro");
-					System.out.println("2. Listar Livros");
-					System.out.println("3. Deletar Livro");
-					System.out.println("4. Editar Livro");
-					System.out.println("5. Buscar Livro");
-					System.out.println();
-
+					cabecalho_Livros();
 					opções_switch_livro();
 
 				}
 			}
-			
+
 		} else {
 			System.out.println("Falha ao inserir o Livro.");
 
@@ -840,18 +542,7 @@ public class Program {
 
 				if (resposta_busca.equalsIgnoreCase("nao")) {
 
-					System.out.println("=============================================");
-					System.out.println("           Área de Gerenciamento           ");
-					System.out.println("                de Livros                     ");
-					System.out.println("=============================================");
-					System.out.println();
-					System.out.println("1. Inserir Livro");
-					System.out.println("2. Listar Livros");
-					System.out.println("3. Deletar Livro");
-					System.out.println("4. Editar Livro");
-					System.out.println("5. Buscar Livro");
-					System.out.println();
-
+					cabecalho_Livros();
 					opções_switch_livro();
 
 				}
@@ -861,19 +552,317 @@ public class Program {
 
 	}
 
-	public static void TestarConexão() {
+	public static void deletarLivroPorId() {
 
-		try {
-			Connection conn = DB.getConnection();
-			if (conn != null) {
-				System.out.println("Conexão com o banco de dados realizada com sucesso!");
-			} else {
-				System.out.println("Falha na conexão com o banco de dados.");
-			}
-		} catch (SQLException e) {
-			System.out.println("Erro ao tentar conectar ao banco de dados: " + e.getMessage());
+		System.out.print("Digite o ID do livro que deseja deletar (ou 'cancelar' para sair): ");
+		sc.nextLine();
+		String valor_id = sc.nextLine();
+
+		if (valor_id.equalsIgnoreCase("cancelar")) {
+			Cabecalho_Principal();
 		}
 
+		try {
+			int id = Integer.parseInt(valor_id);
+			boolean deletado = Livro_Dao.deletarLivro(id);
+
+			if (deletado) {
+				System.out.println("Livro deletado com sucesso!");
+
+				System.out.println();
+				System.out.println();
+				System.out.println();
+
+				System.out.println("Deseja deletar mais algum livro? (Digite 'sim' ou 'nao')");
+
+				String resposta_busca = sc.nextLine();
+
+				while (resposta_busca.equalsIgnoreCase("sim")) {
+
+					deletarLivroPorId();
+
+					System.out.println();
+					System.out.println();
+					System.out.println();
+
+					if (resposta_busca.equalsIgnoreCase("nao")) {
+
+						cabecalho_Livros();
+						opções_switch_livro();
+
+					}
+				}
+
+			} else {
+				System.out.println("Livro com o ID especificado não encontrado.");
+
+				System.out.println();
+				System.out.println();
+				System.out.println();
+				System.out.println("Deseja fazer uma nova tentativa? (Digite 'sim' ou 'nao')");
+
+				String resposta_busca = sc.nextLine();
+
+				while (resposta_busca.equalsIgnoreCase("sim")) {
+
+					deletarLivroPorId();
+
+					System.out.println();
+					System.out.println();
+					System.out.println();
+
+					if (resposta_busca.equalsIgnoreCase("nao")) {
+
+						cabecalho_Livros();
+						opções_switch_livro();
+
+					}
+				}
+			}
+		} catch (NumberFormatException e) {
+			System.out.println("ID inválido. Por favor, insira um número.");
+
+			System.out.println();
+			deletarLivroPorId();
+		}
 	}
 
+	public static void editarLivroPorId() {
+
+		System.out.print("Digite o ID do livro que deseja editar (ou 'cancelar' para sair): ");
+		String valor_id = sc.nextLine();
+
+		if (valor_id.equalsIgnoreCase("cancelar")) {
+			Cabecalho_Principal();
+		}
+
+		try {
+			int id = Integer.parseInt(valor_id);
+
+			System.out.print("Digite o novo título (ou 'cancelar' para sair): ");
+			String titulo = sc.nextLine();
+			if (titulo.equalsIgnoreCase("cancelar")) {
+				Cabecalho_Principal();
+				return;
+			}
+
+			System.out.print("Digite o novo autor (ou 'cancelar' para sair): ");
+			String autor = sc.nextLine();
+			if (autor.equalsIgnoreCase("cancelar")) {
+				Cabecalho_Principal();
+				return;
+			}
+
+			System.out.print("Digite o novo ISBN (ou 'cancelar' para sair): ");
+			String isbn = sc.nextLine();
+			if (isbn.equalsIgnoreCase("cancelar")) {
+				Cabecalho_Principal();
+				return;
+			}
+
+			System.out.print("Digite o novo ano de publicação (ou 'cancelar' para sair): ");
+			String anoPublicacao = sc.nextLine();
+			if (anoPublicacao.equalsIgnoreCase("cancelar")) {
+				Cabecalho_Principal();
+				return;
+			}
+
+			boolean editado = Livro_Dao.editarLivro(id, titulo, autor, isbn, anoPublicacao);
+
+			if (editado) {
+				System.out.println("Livro editado com sucesso!");
+
+				System.out.println();
+				System.out.println();
+				System.out.println();
+				System.out.println("Deseja fazer uma nova edição? (Digite 'sim' ou 'nao')");
+
+				String resposta_busca = sc.nextLine();
+
+				while (resposta_busca.equalsIgnoreCase("sim")) {
+
+					editarLivroPorId();
+
+					System.out.println();
+					System.out.println();
+					System.out.println();
+
+					if (resposta_busca.equalsIgnoreCase("nao")) {
+
+						cabecalho_Livros();
+						opções_switch_livro();
+
+					}
+				}
+
+			} else {
+				System.out.println("Livro com o ID especificado não encontrado.");
+
+				System.out.println();
+				System.out.println();
+				System.out.println();
+				System.out.println("Deseja fazer uma nova tentativa? (Digite 'sim' ou 'nao')");
+
+				String resposta_busca = sc.nextLine();
+
+				while (resposta_busca.equalsIgnoreCase("sim")) {
+
+					editarLivroPorId();
+
+					System.out.println();
+					System.out.println();
+					System.out.println();
+
+					if (resposta_busca.equalsIgnoreCase("nao")) {
+
+						cabecalho_Livros();
+						opções_switch_livro();
+
+					}
+				}
+
+			}
+		} catch (NumberFormatException e) {
+			System.out.println("ID inválido. Por favor, insira um número.");
+
+			System.out.println();
+			editarLivroPorId();
+		}
+	}
+
+	public static void buscarLivroPorId() {
+
+		System.out.print("Digite o ID do livro que deseja buscar (ou 'cancelar' para sair): ");
+		String valor_id = sc.nextLine();
+
+		if (valor_id.equalsIgnoreCase("cancelar")) {
+			Cabecalho_Principal();
+		}
+
+		try {
+			int id = Integer.parseInt(valor_id);
+			Livros livro = Livro_Dao.buscarLivroPorId(id);
+
+			if (livro != null) {
+				System.out.println("Livro encontrado: " + livro);
+
+				System.out.println();
+				System.out.println();
+				System.out.println();
+				System.out.println("Deseja fazer uma nova busca? (Digite 'sim' ou 'nao')");
+
+				String resposta_busca = sc.nextLine();
+
+				while (resposta_busca.equalsIgnoreCase("sim")) {
+
+					buscarLivroPorId();
+
+					System.out.println();
+					System.out.println();
+					System.out.println();
+
+					if (resposta_busca.equalsIgnoreCase("nao")) {
+
+						cabecalho_Livros();
+						opções_switch_livro();
+
+					}
+				}
+			} else {
+				System.out.println("Livro com o ID especificado não encontrado.");
+
+				System.out.println();
+				System.out.println();
+				System.out.println();
+				System.out.println("Deseja fazer uma nova tentativa? (Digite 'sim' ou 'nao')");
+
+				String resposta_busca = sc.nextLine();
+
+				while (resposta_busca.equalsIgnoreCase("sim")) {
+
+					buscarLivroPorId();
+
+					System.out.println();
+					System.out.println();
+					System.out.println();
+
+					if (resposta_busca.equalsIgnoreCase("nao")) {
+
+						cabecalho_Livros();
+						opções_switch_livro();
+
+					}
+				}
+			}
+		} catch (NumberFormatException e) {
+			System.out.println("ID inválido. Por favor, insira um número.");
+
+			System.out.println();
+			buscarLivroPorId();
+		}
+	}
+
+	public static void buscarLivroPorTitulo() {
+
+		System.out.print("Digite o título do livro que deseja buscar: ");
+		sc.nextLine();
+		String titulo = sc.nextLine();
+
+		List<Livros> livrosEncontrados = Livro_Dao.buscarLivrosPorTitulo(titulo);
+
+		if (!livrosEncontrados.isEmpty()) {
+			System.out.println("Livros encontrados:");
+			for (Livros livro : livrosEncontrados) {
+				System.out.println(livro);
+			}
+
+			System.out.println();
+			System.out.println();
+			System.out.println();
+			System.out.println("Deseja fazer uma nova busca? (Digite 'sim' ou 'nao')");
+
+			String resposta_busca = sc.nextLine();
+
+			while (resposta_busca.equalsIgnoreCase("sim")) {
+
+				buscarLivroPorTitulo();
+
+				System.out.println();
+				System.out.println();
+				System.out.println();
+
+				if (resposta_busca.equalsIgnoreCase("nao")) {
+
+					buscarLivroPorTitulo();
+					opções_switch_livro();
+
+				}
+			}
+		} else {
+			System.out.println("Nenhum livro encontrado com o título especificado.");
+
+			System.out.println();
+			System.out.println();
+			System.out.println();
+			System.out.println("Deseja fazer uma nova tentativa? (Digite 'sim' ou 'nao')");
+
+			String resposta_busca = sc.nextLine();
+
+			while (resposta_busca.equalsIgnoreCase("sim")) {
+
+				buscarLivroPorTitulo();
+
+				System.out.println();
+				System.out.println();
+				System.out.println();
+
+				if (resposta_busca.equalsIgnoreCase("nao")) {
+
+					buscarLivroPorTitulo();
+					opções_switch_livro();
+
+				}
+			}
+		}
+	}
 }

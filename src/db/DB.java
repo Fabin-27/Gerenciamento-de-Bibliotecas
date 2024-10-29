@@ -31,4 +31,21 @@ public class DB {
             return props;
         }
     }
+    
+    public static void TestarConexão() {
+
+		try {
+			Connection conn = DB.getConnection();
+			if (conn != null) {
+				System.out.println("Conexão com o banco de dados realizada com sucesso!");
+			} else {
+				System.out.println("Falha na conexão com o banco de dados.");
+			}
+		} catch (SQLException e) {
+			System.out.println("Erro ao tentar conectar ao banco de dados: " + e.getMessage());
+		}
+
+	}
 }
+
+
