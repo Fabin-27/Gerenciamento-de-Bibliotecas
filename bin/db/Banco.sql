@@ -17,4 +17,15 @@ CREATE TABLE Livros (
     anoPublicacao VARCHAR(20) NOT NULL
 );
 
-drop table livros
+select * from livros
+
+CREATE TABLE Emprestimos (
+    Id INT PRIMARY KEY AUTO_INCREMENT,
+    LivroId INT,
+    ClienteId INT,
+    DataEmprestimo DATE,
+    DataDevolucao DATE,
+    Status VARCHAR(20),
+    FOREIGN KEY (LivroId) REFERENCES Livros(Id),
+    FOREIGN KEY (ClienteId) REFERENCES Clientes(Id)
+);

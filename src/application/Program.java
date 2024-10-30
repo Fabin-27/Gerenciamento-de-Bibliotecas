@@ -19,7 +19,8 @@ public class Program {
 	public static void main(String[] args) {
 
 		// DB.TestarConexão();
-		Cabecalho_Principal();
+		// Cabecalho_Principal();
+		switch_inicial();
 
 	}
 
@@ -29,277 +30,125 @@ public class Program {
 		System.out.println("                de Biblioteca                     ");
 		System.out.println("=============================================");
 		System.out.println();
-		System.out.println("1. Área de Clientes");
-		System.out.println("2. Área de Livros");
-		System.out.println("0. Sair");
-		System.out.println();
 		switch_inicial();
 	}
 
 	public static void switch_inicial() {
+	    while (true) {
+	        System.out.println("Digite uma opção:");
+	        System.out.println("0 - Sair");
+	        System.out.println("1 - Menu de Clientes");
+	        System.out.println("2 - Menu de Livros");
+	        
+	        int x = sc.nextInt();
 
-		int x = sc.nextInt();
+	        switch (x) {
+	            case 0:
+	                System.out.println("Até a próxima :)");
+	                System.exit(0);
+	                break;
 
-		switch (x) {
+	            case 1:
+	                cabecalho_clientes();
+	                opções_switch_cliente();
+	                return;
 
-		case 0:
+	            case 2:
+	                cabecalho_Livros();
+	                opções_switch_livro();
+	                return;
 
-			System.out.println("Até a próxima :)");
-			System.exit(0);
-
-			break;
-
-		case 1:
-
-			cabecalho_clientes();
-			opções_switch_cliente();
-
-			break;
-
-		case 2:
-
-			cabecalho_Livros();
-			opções_switch_livro();
-
-			break;
-		}
-
+	            default:
+	                System.out.println("Opção inválida. Por favor, digite 0, 1 ou 2.");
+	        }
+	    }
 	}
-	
-	
-	// ÁREA CLIENTES
-	
+
+
+	// ÁREA DOS CLIENTES
 	public static void cabecalho_clientes() {
-		
+
 		System.out.println("=============================================");
 		System.out.println("           Área de Gerenciamento           ");
 		System.out.println("                de Clientes                     ");
 		System.out.println("=============================================");
 		System.out.println();
-		System.out.println("1. Inserir Cliente");
-		System.out.println("2. Listar Clientes");
-		System.out.println("3. Deletar Cliente");
-		System.out.println("4. Editar Cliente");
-		System.out.println("5. Buscar Cliente");
-		System.out.println("6. Voltar");
-		System.out.println("0. Sair");
-		System.out.println();
-		
+
 	}
-	
+
 	public static void opções_switch_cliente() {
+	    while (true) {
+	    	
+	        System.out.println("Digite uma opção:");
+	        System.out.println("0 - Sair do sistema");
+	        System.out.println("1 - Inserir Cliente");
+	        System.out.println("2 - Listar Clientes");
+	        System.out.println("3 - Deletar Cliente por ID");
+	        System.out.println("4 - Editar Cliente por ID");
+	        System.out.println("5 - Buscar Cliente");
+	        System.out.println("6 - Voltar ao Menu Principal");
 
-		int x = sc.nextInt();
+	        int x = sc.nextInt();
 
-		switch (x) {
+	        switch (x) {
+	            case 0:
+	                System.out.println("Saindo do sistema...");
+	                System.exit(0);
+	                break;
 
-		case 0:
+	            case 1:
+	                InserirCliente();
+	                return;
 
-			System.out.println("Saindo do sistema...");
-			System.exit(0);
+	            case 2:
+	                clienteDAO.listarClientes();
+	                System.out.println("Digite '9' para voltar para a área de Gerenciamento de clientes");
+	                
+	                int z = sc.nextInt();
+	                while (z != 9) {
+	                    System.out.println("Comando inválido. Digite '9' para voltar para a área de Gerenciamento de clientes");
+	                    z = sc.nextInt();
+	                }
+	                cabecalho_clientes();
+	                continue;
 
-			break;
+	            case 3:
+	                deletarClientePorId();
+	                return;
 
-		case 1:
+	            case 4:
+	                editarClientePorId();
+	                return;
 
-			InserirCliente();
+	            case 5:
+	                System.out.println("1 - Buscar Cliente por Id");
+	                System.out.println("2 - Buscar Cliente por Nome");
 
-			break;
+	                int opcao_buscar = sc.nextInt();
+	                switch (opcao_buscar) {
+	                    case 1:
+	                        buscarClientePorId();
+	                        break;
+	                    case 2:
+	                        buscarClientePorNome();
+	                        break;
+	                    default:
+	                        System.out.println("Opção inválida. Tente novamente.");
+	                        System.out.println();
+	                        continue;
+	                }
+	                return;
 
-		case 2:
+	            case 6:
+	                Cabecalho_Principal();
+	                switch_inicial();
+	                return;
 
-			clienteDAO.listarClientes();
-
-			System.out.println("Digite '9' para voltar para a área de Gerenciamento de clientes");
-			int z = sc.nextInt();
-
-			while (z != 9) {
-
-				System.out.println("Comando inválido");
-				System.out.println("Digite '9' para voltar para a área de Gerenciamento de clientes");
-				z = sc.nextInt();
-			}
-
-			opções_switch_cliente();
-
-			break;
-
-		case 3:
-
-			deletarClientePorId();
-
-			break;
-
-		case 4:
-
-			editarClientePorId();
-
-			break;
-
-		case 5:
-
-			System.out.println("1. Buscar Cliente por Id");
-			System.out.println("2. Buscar Cliente por Nome");
-
-			int opção_buscar = sc.nextInt();
-
-			switch (opção_buscar) {
-
-			case 1:
-
-				buscarClientePorId();
-
-				break;
-
-			case 2:
-
-				buscarClientePorNome();
-
-				break;
-
-			default:
-				System.out.println("Opção inválida. Tente novamente.");
-
-			}
-
-			break;
-			
-		case 6:
-
-			Cabecalho_Principal();
-			switch_inicial();
-
-			break;
-
-		default:
-			System.out.println("Opção inválida. Tente novamente.");
-		}
-
-	}
-
-	public static void buscarClientePorNome() {
-		System.out.print("Digite o nome do cliente que deseja buscar: ");
-		sc.nextLine();
-		String nome = sc.nextLine();
-
-		List<Clientes> clientesEncontrados = Cliente_Dao.buscarClientesPorNome(nome);
-
-		if (!clientesEncontrados.isEmpty()) {
-			System.out.println("Clientes encontrados:");
-			for (Clientes cliente : clientesEncontrados) {
-				System.out.println(cliente);
-			}
-		} else {
-			System.out.println("Nenhum cliente encontrado com o nome especificado.");
-		}
-	}
-
-	public static void buscarClientePorId() {
-		System.out.print("Digite o ID do cliente que deseja buscar (ou 'cancelar' para sair): ");
-		String valor_id = sc.nextLine();
-
-		if (valor_id.equalsIgnoreCase("cancelar")) {
-			Cabecalho_Principal();
-			return;
-		}
-
-		try {
-			int id = Integer.parseInt(valor_id);
-			Clientes cliente = Cliente_Dao.buscarClientePorId(id);
-
-			if (cliente != null) {
-				System.out.println("Cliente encontrado: " + cliente);
-			} else {
-				System.out.println("Cliente com o ID especificado não encontrado.");
-			}
-		} catch (NumberFormatException e) {
-			System.out.println("ID inválido. Por favor, insira um número.");
-		}
-	}
-
-	public static void editarClientePorId() {
-		System.out.print("Digite o ID do cliente que deseja editar (ou 'cancelar' para sair): ");
-		String valor_id = sc.nextLine();
-
-		if (valor_id.equalsIgnoreCase("cancelar")) {
-			Cabecalho_Principal();
-			return;
-		}
-
-		try {
-			int id = Integer.parseInt(valor_id);
-
-			System.out.print("Digite o novo nome (ou 'cancelar' para sair): ");
-			String nome = sc.nextLine();
-			if (nome.equalsIgnoreCase("cancelar")) {
-				Cabecalho_Principal();
-				return;
-			}
-
-			System.out.print("Digite o novo CPF (ou 'cancelar' para sair): ");
-			String cpf = sc.nextLine();
-			if (cpf.equalsIgnoreCase("cancelar")) {
-				Cabecalho_Principal();
-				return;
-			}
-
-			System.out.print("Digite o novo email (ou 'cancelar' para sair): ");
-			String email = sc.nextLine();
-			if (email.equalsIgnoreCase("cancelar")) {
-				Cabecalho_Principal();
-				return;
-			}
-
-			System.out.print("Digite o novo telefone (ou 'cancelar' para sair): ");
-			String telefone = sc.nextLine();
-			if (telefone.equalsIgnoreCase("cancelar")) {
-				Cabecalho_Principal();
-				return;
-			}
-
-			System.out.print("Digite o novo endereço (ou 'cancelar' para sair): ");
-			String endereco = sc.nextLine();
-			if (endereco.equalsIgnoreCase("cancelar")) {
-				Cabecalho_Principal();
-				return;
-			}
-
-			boolean editado = Cliente_Dao.editarCliente(id, nome, cpf, email, telefone, endereco);
-
-			if (editado) {
-				System.out.println("Cliente editado com sucesso!");
-				Cabecalho_Principal();
-			} else {
-				System.out.println("Cliente com o ID especificado não encontrado.");
-			}
-		} catch (NumberFormatException e) {
-			System.out.println("ID inválido. Por favor, insira um número.");
-		}
-	}
-
-	public static void deletarClientePorId() {
-		System.out.print("Digite o ID do cliente que deseja deletar (ou 'cancelar' para sair): ");
-		sc.nextLine();
-		String valor_id = sc.nextLine();
-
-		if (valor_id.equalsIgnoreCase("cancelar")) {
-			Cabecalho_Principal();
-			return;
-		}
-
-		try {
-			int id = Integer.parseInt(valor_id);
-			boolean deletado = Cliente_Dao.deletarCliente(id);
-
-			if (deletado) {
-				System.out.println("Cliente deletado com sucesso!");
-				Cabecalho_Principal();
-			} else {
-				System.out.println("Cliente com o ID especificado não encontrado.");
-			}
-		} catch (NumberFormatException e) {
-			System.out.println("ID inválido. Por favor, insira um número.");
-		}
+	            default:
+	                System.out.println("Opção inválida. Tente novamente.");
+	                System.out.println();
+	        }
+	    }
 	}
 
 	public static void InserirCliente() {
@@ -309,50 +158,422 @@ public class Program {
 		String nome = sc.nextLine();
 		if (nome.equalsIgnoreCase("cancelar")) {
 			System.out.println("Operação cancelada.");
-			Cabecalho_Principal();
+			cabecalho_clientes();
+			opções_switch_cliente();
 		}
 
 		System.out.print("Digite o CPF do cliente (ou 'cancelar' para sair): ");
 		String cpf = sc.nextLine();
 		if (cpf.equalsIgnoreCase("cancelar")) {
 			System.out.println("Operação cancelada.");
-			Cabecalho_Principal();
+			cabecalho_clientes();
+			opções_switch_cliente();
 		}
 
 		System.out.print("Digite o email do cliente (ou 'cancelar' para sair): ");
 		String email = sc.nextLine();
 		if (email.equalsIgnoreCase("cancelar")) {
 			System.out.println("Operação cancelada.");
-			Cabecalho_Principal();
+			cabecalho_clientes();
+			opções_switch_cliente();
 		}
 
 		System.out.print("Digite o telefone do cliente (ou 'cancelar' para sair): ");
 		String telefone = sc.nextLine();
 		if (telefone.equalsIgnoreCase("cancelar")) {
 			System.out.println("Operação cancelada.");
-			Cabecalho_Principal();
+			cabecalho_clientes();
+			opções_switch_cliente();
 		}
 
 		System.out.print("Digite o endereço do cliente (ou 'cancelar' para sair): ");
 		String endereco = sc.nextLine();
 		if (endereco.equalsIgnoreCase("cancelar")) {
 			System.out.println("Operação cancelada.");
-			Cabecalho_Principal();
+			cabecalho_clientes();
+			opções_switch_cliente();
 		}
 
 		boolean inserido = Cliente_Dao.inserirCliente(nome, cpf, email, telefone, endereco);
 		if (inserido) {
 			System.out.println("Cliente inserido com sucesso!");
-			Cabecalho_Principal();
+
+			System.out.println();
+			System.out.println();
+			System.out.println();
+			System.out.println("Deseja fazer uma nova inserção? (Digite 'sim' ou 'nao')");
+
+			String resposta_busca = sc.nextLine();
+
+			while (resposta_busca.equalsIgnoreCase("sim")) {
+
+				InserirCliente();
+
+				System.out.println();
+				System.out.println();
+				System.out.println();
+
+				if (resposta_busca.equalsIgnoreCase("nao")) {
+
+					cabecalho_clientes();
+					opções_switch_cliente();
+
+				}
+			}
+
 		} else {
 			System.out.println("Falha ao inserir o cliente.");
-			Cabecalho_Principal();
+
+			System.out.println();
+			System.out.println();
+			System.out.println();
+			System.out.println("Deseja fazer uma nova tentativa? (Digite 'sim' ou 'nao')");
+
+			String resposta_busca = sc.nextLine();
+
+			while (resposta_busca.equalsIgnoreCase("sim")) {
+
+				InserirCliente();
+
+				System.out.println();
+				System.out.println();
+				System.out.println();
+
+				if (resposta_busca.equalsIgnoreCase("nao")) {
+
+					cabecalho_clientes();
+					opções_switch_cliente();
+
+				}
+			}
+
 		}
 	}
 
-	
-	
-	
+	public static void deletarClientePorId() {
+
+		System.out.print("Digite o ID do cliente que deseja deletar (ou 'cancelar' para sair): ");
+		sc.nextLine();
+		String valor_id = sc.nextLine();
+
+		if (valor_id.equalsIgnoreCase("cancelar")) {
+			cabecalho_clientes();
+			opções_switch_cliente();
+		}
+
+		try {
+			int id = Integer.parseInt(valor_id);
+			boolean deletado = Cliente_Dao.deletarCliente(id);
+
+			if (deletado) {
+				System.out.println("Cliente deletado com sucesso!");
+
+				System.out.println();
+				System.out.println();
+				System.out.println();
+				System.out.println("Deseja deletar mais algum cliente? (Digite 'sim' ou 'nao')");
+
+				String resposta_busca = sc.nextLine();
+
+				while (resposta_busca.equalsIgnoreCase("sim")) {
+
+					deletarClientePorId();
+
+					System.out.println();
+					System.out.println();
+					System.out.println();
+
+					if (resposta_busca.equalsIgnoreCase("nao")) {
+
+						cabecalho_clientes();
+						opções_switch_cliente();
+
+					}
+				}
+
+			} else {
+				System.out.println("Cliente com o ID especificado não encontrado.");
+
+				System.out.println();
+				System.out.println();
+				System.out.println();
+				System.out.println("Deseja fazer uma nova tentativa? (Digite 'sim' ou 'nao')");
+
+				String resposta_busca = sc.nextLine();
+
+				while (resposta_busca.equalsIgnoreCase("sim")) {
+
+					deletarClientePorId();
+
+					System.out.println();
+					System.out.println();
+					System.out.println();
+
+					if (resposta_busca.equalsIgnoreCase("nao")) {
+
+						cabecalho_clientes();
+						opções_switch_cliente();
+
+					}
+				}
+			}
+		} catch (NumberFormatException e) {
+			System.out.println("ID inválido. Por favor, insira um número.");
+			System.out.println();
+			deletarClientePorId();
+		}
+	}
+
+	public static void editarClientePorId() {
+		System.out.print("Digite o ID do cliente que deseja editar (ou 'cancelar' para sair): ");
+		String valor_id = sc.nextLine();
+
+		if (valor_id.equalsIgnoreCase("cancelar")) {
+			cabecalho_clientes();
+			opções_switch_cliente();
+		}
+
+		try {
+			int id = Integer.parseInt(valor_id);
+
+			System.out.print("Digite o novo nome (ou 'cancelar' para sair): ");
+			String nome = sc.nextLine();
+			if (nome.equalsIgnoreCase("cancelar")) {
+				cabecalho_clientes();
+				opções_switch_cliente();
+			}
+
+			System.out.print("Digite o novo CPF (ou 'cancelar' para sair): ");
+			String cpf = sc.nextLine();
+			if (cpf.equalsIgnoreCase("cancelar")) {
+				cabecalho_clientes();
+				opções_switch_cliente();
+			}
+
+			System.out.print("Digite o novo email (ou 'cancelar' para sair): ");
+			String email = sc.nextLine();
+			if (email.equalsIgnoreCase("cancelar")) {
+				cabecalho_clientes();
+				opções_switch_cliente();
+			}
+
+			System.out.print("Digite o novo telefone (ou 'cancelar' para sair): ");
+			String telefone = sc.nextLine();
+			if (telefone.equalsIgnoreCase("cancelar")) {
+				cabecalho_clientes();
+				opções_switch_cliente();
+			}
+
+			System.out.print("Digite o novo endereço (ou 'cancelar' para sair): ");
+			String endereco = sc.nextLine();
+			if (endereco.equalsIgnoreCase("cancelar")) {
+				cabecalho_clientes();
+				opções_switch_cliente();
+			}
+
+			boolean editado = Cliente_Dao.editarCliente(id, nome, cpf, email, telefone, endereco);
+
+			if (editado) {
+				System.out.println("Cliente editado com sucesso!");
+
+				System.out.println();
+				System.out.println();
+				System.out.println();
+				System.out.println("Deseja alterar mais algum cliente? (Digite 'sim' ou 'nao')");
+
+				String resposta_busca = sc.nextLine();
+
+				while (resposta_busca.equalsIgnoreCase("sim")) {
+
+					editarClientePorId();
+
+					System.out.println();
+					System.out.println();
+					System.out.println();
+
+					if (resposta_busca.equalsIgnoreCase("nao")) {
+
+						cabecalho_clientes();
+						opções_switch_cliente();
+
+					}
+				}
+			} else {
+				System.out.println("Cliente com o ID especificado não encontrado.");
+
+				System.out.println();
+				System.out.println();
+				System.out.println();
+				System.out.println("Deseja fazer uma nova tentativa? (Digite 'sim' ou 'nao')");
+
+				String resposta_busca = sc.nextLine();
+
+				while (resposta_busca.equalsIgnoreCase("sim")) {
+
+					editarClientePorId();
+
+					System.out.println();
+					System.out.println();
+					System.out.println();
+
+					if (resposta_busca.equalsIgnoreCase("nao")) {
+
+						cabecalho_clientes();
+						opções_switch_cliente();
+
+					}
+				}
+			}
+		} catch (NumberFormatException e) {
+			System.out.println("ID inválido. Por favor, insira um número.");
+			System.out.println();
+			editarClientePorId();
+		}
+	}
+
+	public static void buscarClientePorId() {
+		System.out.print("Digite o ID do cliente que deseja buscar (ou 'cancelar' para sair): ");
+		String valor_id = sc.nextLine();
+
+		if (valor_id.equalsIgnoreCase("cancelar")) {
+			cabecalho_clientes();
+			opções_switch_cliente();
+		}
+
+		try {
+			int id = Integer.parseInt(valor_id);
+			Clientes cliente = Cliente_Dao.buscarClientePorId(id);
+
+			if (cliente != null) {
+				System.out.println("Cliente encontrado: " + cliente);
+
+				System.out.println();
+				System.out.println();
+				System.out.println();
+				System.out.println("Deseja buscar mais algum cliente? (Digite 'sim' ou 'nao')");
+
+				String resposta_busca = sc.nextLine();
+
+				while (resposta_busca.equalsIgnoreCase("sim")) {
+
+					buscarClientePorId();
+
+					System.out.println();
+					System.out.println();
+					System.out.println();
+
+					if (resposta_busca.equalsIgnoreCase("nao")) {
+
+						cabecalho_clientes();
+						opções_switch_cliente();
+
+					}
+				}
+
+			} else {
+				System.out.println("Cliente com o ID especificado não encontrado.");
+
+				System.out.println();
+				System.out.println();
+				System.out.println();
+				System.out.println("Deseja buscar mais algum cliente? (Digite 'sim' ou 'nao')");
+
+				String resposta_busca = sc.nextLine();
+
+				while (resposta_busca.equalsIgnoreCase("sim")) {
+
+					buscarClientePorId();
+
+					System.out.println();
+					System.out.println();
+					System.out.println();
+
+					if (resposta_busca.equalsIgnoreCase("nao")) {
+
+						cabecalho_clientes();
+						opções_switch_cliente();
+
+					}
+				}
+
+			}
+		} catch (NumberFormatException e) {
+			System.out.println("ID inválido. Por favor, insira um número.");
+			System.out.println();
+			buscarClientePorId();
+
+		}
+	}
+
+	public static void buscarClientePorNome() {
+
+		System.out.print("Digite o nome do cliente que deseja buscar (ou 'cancelar' para sair): ");
+		sc.nextLine();
+		String nome = sc.nextLine();
+
+		if (nome.equalsIgnoreCase("cancelar")) {
+			cabecalho_Livros();
+			opções_switch_livro();
+		}
+
+		List<Clientes> clientesEncontrados = Cliente_Dao.buscarClientesPorNome(nome);
+
+		if (!clientesEncontrados.isEmpty()) {
+			System.out.println("Clientes encontrados:");
+			for (Clientes cliente : clientesEncontrados) {
+				System.out.println(cliente);
+			}
+
+			System.out.println();
+			System.out.println();
+			System.out.println();
+			System.out.println("Deseja buscar mais algum cliente? (Digite 'sim' ou 'nao')");
+
+			String resposta_busca = sc.nextLine();
+
+			while (resposta_busca.equalsIgnoreCase("sim")) {
+
+				buscarClientePorNome();
+
+				System.out.println();
+				System.out.println();
+				System.out.println();
+
+				if (resposta_busca.equalsIgnoreCase("nao")) {
+
+					cabecalho_clientes();
+					opções_switch_cliente();
+
+				}
+			}
+		} else {
+			System.out.println("Nenhum cliente encontrado com o nome especificado.");
+
+			System.out.println();
+			System.out.println();
+			System.out.println();
+			System.out.println("Deseja fazer uma nova tentativa? (Digite 'sim' ou 'nao')");
+
+			String resposta_busca = sc.nextLine();
+
+			while (resposta_busca.equalsIgnoreCase("sim")) {
+
+				buscarClientePorNome();
+
+				System.out.println();
+				System.out.println();
+				System.out.println();
+
+				if (resposta_busca.equalsIgnoreCase("nao")) {
+
+					cabecalho_clientes();
+					opções_switch_cliente();
+
+				}
+			}
+		}
+	}
+
 	// ÁREA DOS LIVROS
 	public static void cabecalho_Livros() {
 
@@ -361,107 +582,82 @@ public class Program {
 		System.out.println("                de Livros                     ");
 		System.out.println("=============================================");
 		System.out.println();
-		System.out.println("1. Inserir Livro");
-		System.out.println("2. Listar Livros");
-		System.out.println("3. Deletar Livro");
-		System.out.println("4. Editar Livro");
-		System.out.println("5. Buscar Livro");
-		System.out.println("6. Voltar");
-		System.out.println("0. Sair");
-		System.out.println();
 
 	}
 
 	public static void opções_switch_livro() {
+	    while (true) {
+	    	
+	        System.out.println("Digite uma opção:");
+	        System.out.println("0 - Sair do sistema");
+	        System.out.println("1 - Inserir Livro");
+	        System.out.println("2 - Listar Livros");
+	        System.out.println("3 - Deletar Livro por ID");
+	        System.out.println("4 - Editar Livro por ID");
+	        System.out.println("5 - Buscar Livro");
+	        System.out.println("6 - Voltar ao Menu Principal");
 
-		int x = sc.nextInt();
+	        int x = sc.nextInt();
 
-		switch (x) {
+	        switch (x) {
+	            case 0:
+	                System.out.println("Até a próxima :)");
+	                System.exit(0);
+	                break;
 
-		case 0:
+	            case 1:
+	                InserirLivro();
+	                return;
 
-			System.out.println("Até a próxima :)");
-			System.exit(0);
+	            case 2:
+	                livroDAO.listarLivros();
+	                System.out.println("Digite '9' para voltar para a área de Gerenciamento de livros");
+	                
+	                int z = sc.nextInt();
+	                while (z != 9) {
+	                    System.out.println("Comando inválido. Digite '9' para voltar para a área de Gerenciamento de livros");
+	                    z = sc.nextInt();
+	                }
+	                cabecalho_Livros();
+	                continue;
 
-			break;
+	            case 3:
+	                deletarLivroPorId();
+	                return;
 
-		case 1:
+	            case 4:
+	                editarLivroPorId();
+	                return;
 
-			InserirLivro();
+	            case 5:
+	                System.out.println("1 - Buscar Livro por Id");
+	                System.out.println("2 - Buscar Livro por Título");
 
-			break;
+	                int opcao_buscar = sc.nextInt();
+	                switch (opcao_buscar) {
+	                    case 1:
+	                        buscarLivroPorId();
+	                        break;
+	                    case 2:
+	                        buscarLivroPorTitulo();
+	                        break;
+	                    default:
+	                        System.out.println("Opção inválida. Tente novamente.");
+	                        System.out.println();
+	                        continue;
+	                }
+	                return;
 
-		case 2:
+	            case 6:
+	                Cabecalho_Principal();
+	                switch_inicial();
+	                return;
 
-			livroDAO.listarLivros();
-
-			System.out.println("Digite '9' para voltar para a área de Gerenciamento de livros");
-
-			int z = sc.nextInt();
-
-			while (z != 9) {
-
-				System.out.println("Comando inválido");
-				System.out.println("Digite '9' para voltar para a área de Gerenciamento de livros");
-				z = sc.nextInt();
-			}
-
-			cabecalho_Livros();
-			opções_switch_livro();
-
-			break;
-
-		case 3:
-
-			deletarLivroPorId();
-
-			break;
-
-		case 4:
-
-			editarLivroPorId();
-
-			break;
-
-		case 5:
-
-			System.out.println("1. Buscar Livro por Id");
-			System.out.println("2. Buscar Livro por Titulo");
-
-			int opção_buscar = sc.nextInt();
-
-			switch (opção_buscar) {
-
-			case 1:
-
-				buscarLivroPorId();
-
-				break;
-
-			case 2:
-
-				buscarLivroPorTitulo();
-
-				break;
-
-			default:
-				System.out.println("Opção inválida. Tente novamente.");
-
-			}
-
-			break;
-
-		case 6:
-
-			Cabecalho_Principal();
-			switch_inicial();
-
-			break;
-
-		default:
-			System.out.println("Opção inválida. Tente novamente.");
-		}
-
+	            default:
+	                System.out.println("Opção inválida. Tente novamente.");
+	                System.out.println();
+	        }
+	    }
 	}
 
 	public static void InserirLivro() {
@@ -470,28 +666,32 @@ public class Program {
 		sc.nextLine();
 		String titulo = sc.nextLine();
 		if (titulo.equalsIgnoreCase("cancelar")) {
-			Cabecalho_Principal();
+			cabecalho_Livros();
+			opções_switch_livro();
 
 		}
 
 		System.out.print("Digite o autor (ou 'cancelar' para sair): ");
 		String autor = sc.nextLine();
 		if (autor.equalsIgnoreCase("cancelar")) {
-			Cabecalho_Principal();
+			cabecalho_Livros();
+			opções_switch_livro();
 
 		}
 
 		System.out.print("Digite o ISBN (ou 'cancelar' para sair): ");
 		String isbn = sc.nextLine();
 		if (isbn.equalsIgnoreCase("cancelar")) {
-			Cabecalho_Principal();
+			cabecalho_Livros();
+			opções_switch_livro();
 
 		}
 
 		System.out.print("Digite o ano de publicação (ou 'cancelar' para sair): ");
 		String anoPublicacao = sc.nextLine();
 		if (anoPublicacao.equalsIgnoreCase("cancelar")) {
-			Cabecalho_Principal();
+			cabecalho_Livros();
+			opções_switch_livro();
 
 		}
 
@@ -559,7 +759,8 @@ public class Program {
 		String valor_id = sc.nextLine();
 
 		if (valor_id.equalsIgnoreCase("cancelar")) {
-			Cabecalho_Principal();
+			cabecalho_Livros();
+			opções_switch_livro();
 		}
 
 		try {
@@ -633,7 +834,8 @@ public class Program {
 		String valor_id = sc.nextLine();
 
 		if (valor_id.equalsIgnoreCase("cancelar")) {
-			Cabecalho_Principal();
+			cabecalho_Livros();
+			opções_switch_livro();
 		}
 
 		try {
@@ -642,29 +844,29 @@ public class Program {
 			System.out.print("Digite o novo título (ou 'cancelar' para sair): ");
 			String titulo = sc.nextLine();
 			if (titulo.equalsIgnoreCase("cancelar")) {
-				Cabecalho_Principal();
-				return;
+				cabecalho_Livros();
+				opções_switch_livro();
 			}
 
 			System.out.print("Digite o novo autor (ou 'cancelar' para sair): ");
 			String autor = sc.nextLine();
 			if (autor.equalsIgnoreCase("cancelar")) {
-				Cabecalho_Principal();
-				return;
+				cabecalho_Livros();
+				opções_switch_livro();
 			}
 
 			System.out.print("Digite o novo ISBN (ou 'cancelar' para sair): ");
 			String isbn = sc.nextLine();
 			if (isbn.equalsIgnoreCase("cancelar")) {
-				Cabecalho_Principal();
-				return;
+				cabecalho_Livros();
+				opções_switch_livro();
 			}
 
 			System.out.print("Digite o novo ano de publicação (ou 'cancelar' para sair): ");
 			String anoPublicacao = sc.nextLine();
 			if (anoPublicacao.equalsIgnoreCase("cancelar")) {
-				Cabecalho_Principal();
-				return;
+				cabecalho_Livros();
+				opções_switch_livro();
 			}
 
 			boolean editado = Livro_Dao.editarLivro(id, titulo, autor, isbn, anoPublicacao);
@@ -736,7 +938,8 @@ public class Program {
 		String valor_id = sc.nextLine();
 
 		if (valor_id.equalsIgnoreCase("cancelar")) {
-			Cabecalho_Principal();
+			cabecalho_Livros();
+			opções_switch_livro();
 		}
 
 		try {
