@@ -86,15 +86,11 @@ public class Program {
 	            System.out.println("Login bem-sucedido!");
 	        } else {
 	            System.out.println("Login ou senha incorretos. Tente novamente.");
+	            login();
 	        }
 	    }
 
-	    
-	
-	
-	
-	
-	
+
 	// ÁREA DOS FUNCIONÁRIOS
 	public static void cabecalho_funcionarios() {
 
@@ -182,68 +178,76 @@ public class Program {
 	}
 
 	public static void InserirFuncionario() {
-		sc.nextLine();
-		System.out.print("Digite o nome do funcionário (ou 'cancelar' para sair): ");
-		String nome = sc.nextLine();
-		if (nome.equalsIgnoreCase("cancelar")) {
-			System.out.println("Operação cancelada.");
-			cabecalho_funcionarios();
-			opções_switch_funcionario();
-		}
+        sc.nextLine();
+        System.out.print("Digite o nome do funcionário (ou 'cancelar' para sair): ");
+        String nome = sc.nextLine();
+        if (nome.equalsIgnoreCase("cancelar")) {
+            System.out.println("Operação cancelada.");
+            return;
+        }
 
-		System.out.print("Digite o CPF do funcionário (ou 'cancelar' para sair): ");
-		String cpf = sc.nextLine();
-		if (cpf.equalsIgnoreCase("cancelar")) {
-			System.out.println("Operação cancelada.");
-			cabecalho_funcionarios();
-			opções_switch_funcionario();
-		}
+        System.out.print("Digite o CPF do funcionário (ou 'cancelar' para sair): ");
+        String cpf = sc.nextLine();
+        if (cpf.equalsIgnoreCase("cancelar")) {
+            System.out.println("Operação cancelada.");
+            return;
+        }
 
-		System.out.print("Digite o cargo do funcionário (ou 'cancelar' para sair): ");
-		String cargo = sc.nextLine();
-		if (cargo.equalsIgnoreCase("cancelar")) {
-			System.out.println("Operação cancelada.");
-			cabecalho_funcionarios();
-			opções_switch_funcionario();
-		}
+        System.out.print("Digite o cargo do funcionário (ou 'cancelar' para sair): ");
+        String cargo = sc.nextLine();
+        if (cargo.equalsIgnoreCase("cancelar")) {
+            System.out.println("Operação cancelada.");
+            return;
+        }
 
-		System.out.print("Digite o salário do funcionário (ou 'cancelar' para sair): ");
-		String salarioStr = sc.nextLine();
-		if (salarioStr.equalsIgnoreCase("cancelar")) {
-			System.out.println("Operação cancelada.");
-			cabecalho_funcionarios();
-			opções_switch_funcionario();
-		}
-		double salario = Double.parseDouble(salarioStr);
+        System.out.print("Digite o salário do funcionário (ou 'cancelar' para sair): ");
+        String salarioStr = sc.nextLine();
+        if (salarioStr.equalsIgnoreCase("cancelar")) {
+            System.out.println("Operação cancelada.");
+            return;
+        }
+        double salario = Double.parseDouble(salarioStr);
 
-		System.out.print("Digite o email do funcionário (ou 'cancelar' para sair): ");
-		String email = sc.nextLine();
-		if (email.equalsIgnoreCase("cancelar")) {
-			System.out.println("Operação cancelada.");
-			cabecalho_funcionarios();
-			opções_switch_funcionario();
-		}
+        System.out.print("Digite o email do funcionário (ou 'cancelar' para sair): ");
+        String email = sc.nextLine();
+        if (email.equalsIgnoreCase("cancelar")) {
+            System.out.println("Operação cancelada.");
+            return;
+        }
 
-		System.out.print("Digite o telefone do funcionário (ou 'cancelar' para sair): ");
-		String telefone = sc.nextLine();
-		if (telefone.equalsIgnoreCase("cancelar")) {
-			System.out.println("Operação cancelada.");
-			cabecalho_funcionarios();
-			opções_switch_funcionario();
-		}
+        System.out.print("Digite o telefone do funcionário (ou 'cancelar' para sair): ");
+        String telefone = sc.nextLine();
+        if (telefone.equalsIgnoreCase("cancelar")) {
+            System.out.println("Operação cancelada.");
+            return;
+        }
 
-		System.out.print("Digite a data de contratação do funcionário (ou 'cancelar' para sair): ");
-		String dataContratacao = sc.nextLine();
-		if (dataContratacao.equalsIgnoreCase("cancelar")) {
-			System.out.println("Operação cancelada.");
-			cabecalho_funcionarios();
-			opções_switch_funcionario();
-		}
+        System.out.print("Digite a data de contratação do funcionário (ou 'cancelar' para sair): ");
+        String dataContratacao = sc.nextLine();
+        if (dataContratacao.equalsIgnoreCase("cancelar")) {
+            System.out.println("Operação cancelada.");
+            return;
+        }
 
-		boolean inserido = Funcionario_Dao.inserirFuncionario(nome, cpf, cargo, salario, email, telefone,
-				dataContratacao);
-		if (inserido) {
-			System.out.println("Funcionário inserido com sucesso!");
+        int funcionarioId = Funcionario_Dao.inserirFuncionario(nome, cpf, cargo, salario, email, telefone, dataContratacao);
+        if (funcionarioId != -1) {
+            System.out.print("Digite o login(e-mail) (ou 'cancelar' para sair): ");
+            String login = sc.nextLine();
+            if (login.equalsIgnoreCase("cancelar")) {
+                System.out.println("Operação cancelada.");
+                return;
+            }
+
+            System.out.print("Digite a senha (ou 'cancelar' para sair): ");
+            String senha = sc.nextLine();
+            if (senha.equalsIgnoreCase("cancelar")) {
+                System.out.println("Operação cancelada.");
+                return;
+            }
+
+            boolean loginInserido =Funcionario_Dao.inserirLogin(funcionarioId, login, senha);
+            if (loginInserido) {
+                System.out.println("Funcionário e login inseridos com sucesso!");
 
 			System.out.println();
 			System.out.println();
@@ -287,7 +291,7 @@ public class Program {
 					opções_switch_funcionario();
 				}
 			}
-		}
+		}}
 	}
 
 	public static void deletarFuncionarioPorId() {
