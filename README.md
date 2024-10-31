@@ -28,7 +28,9 @@ Consulta de livros cadastrados.
 
 Tecnologias Utilizadas
 Linguagem: Java
+
 Banco de Dados: SQLite/MySQL (dependendo da configuração)
+
 Bibliotecas:
 Microsoft.Data.Sqlite (para SQLite)
 
