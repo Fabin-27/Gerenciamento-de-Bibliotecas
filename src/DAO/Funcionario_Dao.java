@@ -37,14 +37,14 @@ public class Funcionario_Dao {
 			if (rowsInserted > 0) {
 				try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
 					if (generatedKeys.next()) {
-						return generatedKeys.getInt(1); // Retorna o ID gerado
+						return generatedKeys.getInt(1);
 					}
 				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return -1; // Retorna -1 se não conseguir inserir
+		return -1;
 	}
 
 	public static void listarFuncionarios() {

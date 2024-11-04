@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import DAO.Cliente_Dao;
+import DAO.Emprestimo_Dao;
 import DAO.Funcionario_Dao;
 import DAO.Livro_Dao;
 //import db.DB;
@@ -16,11 +17,12 @@ public class Program {
 	static Scanner sc = new Scanner(System.in);
 	static Cliente_Dao clienteDAO = new Cliente_Dao();
 	static Livro_Dao livroDAO = new Livro_Dao();
+	static Emprestimo_Dao emprestimoDAO = new Emprestimo_Dao();
 
 	public static void main(String[] args) {
 
 		// DB.TestarConexão();
-		login();
+		//login();
 		Cabecalho_Principal();
 		switch_inicial();
 
@@ -42,6 +44,7 @@ public class Program {
 			System.out.println("1 - Menu de Clientes");
 			System.out.println("2 - Menu de Livros");
 			System.out.println("3 - Menu de Funcionários");
+			System.out.println("4 - Menu de Emprestimos");
 
 			int x = sc.nextInt();
 
@@ -66,6 +69,10 @@ public class Program {
 				opções_switch_funcionario();
 
 				return;
+			case 4:
+				cabecalho_emprestimos();
+				opções_switch_emprestimos();
+				return;
 
 			default:
 				System.out.println("Opção inválida. Por favor, digite 0, 1 ou 2.");
@@ -73,23 +80,205 @@ public class Program {
 		}
 	}
 
-	
-	 public static void login() {
-	        
-	        System.out.print("Digite o login: ");
-	        String login = sc.nextLine();
+	public static void login() {
 
-	        System.out.print("Digite a senha: ");
-	        String senha = sc.nextLine();
+		System.out.print("Digite o login: ");
+		String login = sc.nextLine();
 
-	        if (Funcionario_Dao.autenticar(login, senha)) {
-	            System.out.println("Login bem-sucedido!");
-	        } else {
-	            System.out.println("Login ou senha incorretos. Tente novamente.");
-	            login();
+		System.out.print("Digite a senha: ");
+		String senha = sc.nextLine();
+
+		if (Funcionario_Dao.autenticar(login, senha)) {
+			System.out.println("Login bem-sucedido!");
+		} else {
+			System.out.println("Login ou senha incorretos. Tente novamente.");
+			login();
+		}
+	}
+
+	// ÁREA DE EMPRESTIMOS
+	public static void cabecalho_emprestimos() {
+
+		System.out.println("=============================================");
+		System.out.println("           Área de Gerenciamento           ");
+		System.out.println("              de Emprestimos              ");
+		System.out.println("=============================================");
+		System.out.println();
+
+	}
+
+	public static void opções_switch_emprestimos() {
+		while (true) {
+			System.out.println("Digite uma opção:");
+			System.out.println("0 - Sair do sistema");
+			System.out.println("1 - Registrar Empréstimo");
+			System.out.println("2 - Listar Empréstimos");
+			System.out.println("3 - Devolver Livro");
+			System.out.println("4 - Buscar Empréstimo por Cliente ou Livro");
+			System.out.println("5 - Voltar ao Menu Principal");
+
+			int x = sc.nextInt();
+
+	        switch (x) {
+	            case 0:
+	                System.out.println("Saindo do sistema...");
+	                System.exit(0);
+	                break;
+
+	            case 1:
+	                registrarEmprestimoUsuario();
+	                return;
+
+	            case 2:
+	            	emprestimoDAO.listarEmprestimos();
+	            	System.out.println("Digite '9' para voltar para a área de Gerenciamento de emprestimos");
+
+					int z = sc.nextInt();
+					while (z != 9) {
+						System.out
+								.println("Comando inválido. Digite '9' para voltar para a área de Gerenciamento de emprestimos");
+						z = sc.nextInt();
+					}
+					cabecalho_emprestimos();
+					continue;
+
+	            case 3:
+	            	
+	            	registrarDevolucao();
+
+	            	return;
+
+	            case 4:
+
+	            	return;
+
+	            case 5:
+	                System.out.println("Voltando ao menu principal...");
+	                return;  // Volta para o menu principal
+
+	            default:
+	                System.out.println("Opção inválida. Tente novamente.");
 	        }
-	    }
+		}
+	}
 
+	public static void registrarEmprestimoUsuario() {
+
+		sc.nextLine();
+		System.out.print("Digite o ID do livro (ou 'cancelar' para sair): ");
+		String livroIdInput = sc.nextLine();
+		if (livroIdInput.equalsIgnoreCase("cancelar")) {
+			cabecalho_emprestimos();
+			opções_switch_emprestimos();
+			return;
+		}
+		int livroId = Integer.parseInt(livroIdInput);
+
+		System.out.print("Digite o ID do cliente (ou 'cancelar' para sair): ");
+		String clienteIdInput = sc.nextLine();
+		if (clienteIdInput.equalsIgnoreCase("cancelar")) {
+			cabecalho_emprestimos();
+			opções_switch_emprestimos();
+			return;
+		}
+		int clienteId = Integer.parseInt(clienteIdInput);
+
+		System.out.print("Digite a data de empréstimo (formato YYYY-MM-DD) ou 'cancelar' para sair: ");
+		String dataEmprestimo = sc.nextLine();
+		if (dataEmprestimo.equalsIgnoreCase("cancelar")) {
+			cabecalho_emprestimos();
+			opções_switch_emprestimos();
+			return;
+		}
+
+		boolean sucesso = Emprestimo_Dao.registrarEmprestimo(livroId, clienteId, dataEmprestimo);
+
+		if (sucesso) {
+			System.out.println("Empréstimo registrado com sucesso!");
+			System.out.println("Deseja registrar outro empréstimo? (Digite 'sim' ou 'não')");
+			String resposta = sc.nextLine();
+
+			if (resposta.equalsIgnoreCase("sim")) {
+				registrarEmprestimoUsuario();
+			} else {
+				cabecalho_emprestimos();
+				opções_switch_emprestimos();
+			}
+		} else {
+			System.out.println("Falha ao registrar o empréstimo.");
+			System.out.println("Deseja tentar novamente? (Digite 'sim' ou 'não')");
+			String resposta = sc.nextLine();
+
+			if (resposta.equalsIgnoreCase("sim")) {
+				registrarEmprestimoUsuario();
+			} else {
+				cabecalho_emprestimos();
+				opções_switch_emprestimos();
+			}
+		}
+	}
+	
+	public static void registrarDevolucao() {
+
+		sc.nextLine();
+        System.out.print("Digite o ID do empréstimo a ser devolvido: ");
+        int emprestimoId = sc.nextInt();
+
+        sc.nextLine();
+        System.out.print("Digite a data de devolução (formato YYYY-MM-DD): ");
+        String dataDevolucao = sc.nextLine();
+
+        boolean sucesso = Emprestimo_Dao.devolverLivro(emprestimoId, dataDevolucao);
+
+        if (sucesso) {
+            System.out.println("Devolução registrada com sucesso!");
+            
+            System.out.println();
+			System.out.println();
+			System.out.println();
+			System.out.println("Deseja fazer mais algum retorno? (Digite 'sim' ou 'nao')");
+			
+			String resposta_busca = sc.nextLine();
+
+			while (resposta_busca.equalsIgnoreCase("sim")) {
+				registrarDevolucao();
+
+				System.out.println();
+				System.out.println();
+				System.out.println();
+
+				if (resposta_busca.equalsIgnoreCase("nao")) {
+					cabecalho_funcionarios();
+					opções_switch_funcionario();
+				}
+			}
+        } else {
+            System.out.println("Falha ao registrar a devolução.");
+            
+            System.out.println();
+			System.out.println();
+			System.out.println();
+			System.out.println("Deseja fazer uma nova tentativa? (Digite 'sim' ou 'nao')");
+
+			String resposta_busca = sc.nextLine();
+
+			while (resposta_busca.equalsIgnoreCase("sim")) {
+				registrarDevolucao();
+
+				System.out.println();
+				System.out.println();
+				System.out.println();
+
+				if (resposta_busca.equalsIgnoreCase("nao")) {
+					cabecalho_emprestimos();
+					opções_switch_emprestimos();
+				}
+			}
+		}   
+	}
+    
+	
+	
 
 	// ÁREA DOS FUNCIONÁRIOS
 	public static void cabecalho_funcionarios() {
@@ -178,120 +367,122 @@ public class Program {
 	}
 
 	public static void InserirFuncionario() {
-        sc.nextLine();
-        System.out.print("Digite o nome do funcionário (ou 'cancelar' para sair): ");
-        String nome = sc.nextLine();
-        if (nome.equalsIgnoreCase("cancelar")) {
-            System.out.println("Operação cancelada.");
-            return;
-        }
+		sc.nextLine();
+		System.out.print("Digite o nome do funcionário (ou 'cancelar' para sair): ");
+		String nome = sc.nextLine();
+		if (nome.equalsIgnoreCase("cancelar")) {
+			System.out.println("Operação cancelada.");
+			return;
+		}
 
-        System.out.print("Digite o CPF do funcionário (ou 'cancelar' para sair): ");
-        String cpf = sc.nextLine();
-        if (cpf.equalsIgnoreCase("cancelar")) {
-            System.out.println("Operação cancelada.");
-            return;
-        }
+		System.out.print("Digite o CPF do funcionário (ou 'cancelar' para sair): ");
+		String cpf = sc.nextLine();
+		if (cpf.equalsIgnoreCase("cancelar")) {
+			System.out.println("Operação cancelada.");
+			return;
+		}
 
-        System.out.print("Digite o cargo do funcionário (ou 'cancelar' para sair): ");
-        String cargo = sc.nextLine();
-        if (cargo.equalsIgnoreCase("cancelar")) {
-            System.out.println("Operação cancelada.");
-            return;
-        }
+		System.out.print("Digite o cargo do funcionário (ou 'cancelar' para sair): ");
+		String cargo = sc.nextLine();
+		if (cargo.equalsIgnoreCase("cancelar")) {
+			System.out.println("Operação cancelada.");
+			return;
+		}
 
-        System.out.print("Digite o salário do funcionário (ou 'cancelar' para sair): ");
-        String salarioStr = sc.nextLine();
-        if (salarioStr.equalsIgnoreCase("cancelar")) {
-            System.out.println("Operação cancelada.");
-            return;
-        }
-        double salario = Double.parseDouble(salarioStr);
+		System.out.print("Digite o salário do funcionário (ou 'cancelar' para sair): ");
+		String salarioStr = sc.nextLine();
+		if (salarioStr.equalsIgnoreCase("cancelar")) {
+			System.out.println("Operação cancelada.");
+			return;
+		}
+		double salario = Double.parseDouble(salarioStr);
 
-        System.out.print("Digite o email do funcionário (ou 'cancelar' para sair): ");
-        String email = sc.nextLine();
-        if (email.equalsIgnoreCase("cancelar")) {
-            System.out.println("Operação cancelada.");
-            return;
-        }
+		System.out.print("Digite o email do funcionário (ou 'cancelar' para sair): ");
+		String email = sc.nextLine();
+		if (email.equalsIgnoreCase("cancelar")) {
+			System.out.println("Operação cancelada.");
+			return;
+		}
 
-        System.out.print("Digite o telefone do funcionário (ou 'cancelar' para sair): ");
-        String telefone = sc.nextLine();
-        if (telefone.equalsIgnoreCase("cancelar")) {
-            System.out.println("Operação cancelada.");
-            return;
-        }
+		System.out.print("Digite o telefone do funcionário (ou 'cancelar' para sair): ");
+		String telefone = sc.nextLine();
+		if (telefone.equalsIgnoreCase("cancelar")) {
+			System.out.println("Operação cancelada.");
+			return;
+		}
 
-        System.out.print("Digite a data de contratação do funcionário (ou 'cancelar' para sair): ");
-        String dataContratacao = sc.nextLine();
-        if (dataContratacao.equalsIgnoreCase("cancelar")) {
-            System.out.println("Operação cancelada.");
-            return;
-        }
+		System.out.print("Digite a data de contratação do funcionário (ou 'cancelar' para sair): ");
+		String dataContratacao = sc.nextLine();
+		if (dataContratacao.equalsIgnoreCase("cancelar")) {
+			System.out.println("Operação cancelada.");
+			return;
+		}
 
-        int funcionarioId = Funcionario_Dao.inserirFuncionario(nome, cpf, cargo, salario, email, telefone, dataContratacao);
-        if (funcionarioId != -1) {
-            System.out.print("Digite o login(e-mail) (ou 'cancelar' para sair): ");
-            String login = sc.nextLine();
-            if (login.equalsIgnoreCase("cancelar")) {
-                System.out.println("Operação cancelada.");
-                return;
-            }
-
-            System.out.print("Digite a senha (ou 'cancelar' para sair): ");
-            String senha = sc.nextLine();
-            if (senha.equalsIgnoreCase("cancelar")) {
-                System.out.println("Operação cancelada.");
-                return;
-            }
-
-            boolean loginInserido =Funcionario_Dao.inserirLogin(funcionarioId, login, senha);
-            if (loginInserido) {
-                System.out.println("Funcionário e login inseridos com sucesso!");
-
-			System.out.println();
-			System.out.println();
-			System.out.println();
-			System.out.println("Deseja fazer uma nova inserção? (Digite 'sim' ou 'nao')");
-
-			String resposta_busca = sc.nextLine();
-
-			while (resposta_busca.equalsIgnoreCase("sim")) {
-				InserirFuncionario();
-
-				System.out.println();
-				System.out.println();
-				System.out.println();
-
-				if (resposta_busca.equalsIgnoreCase("nao")) {
-					cabecalho_funcionarios();
-					opções_switch_funcionario();
-				}
+		int funcionarioId = Funcionario_Dao.inserirFuncionario(nome, cpf, cargo, salario, email, telefone,
+				dataContratacao);
+		if (funcionarioId != -1) {
+			System.out.print("Digite o login(e-mail) (ou 'cancelar' para sair): ");
+			String login = sc.nextLine();
+			if (login.equalsIgnoreCase("cancelar")) {
+				System.out.println("Operação cancelada.");
+				return;
 			}
 
-		} else {
-			System.out.println("Falha ao inserir o funcionário.");
+			System.out.print("Digite a senha (ou 'cancelar' para sair): ");
+			String senha = sc.nextLine();
+			if (senha.equalsIgnoreCase("cancelar")) {
+				System.out.println("Operação cancelada.");
+				return;
+			}
 
-			System.out.println();
-			System.out.println();
-			System.out.println();
-			System.out.println("Deseja fazer uma nova tentativa? (Digite 'sim' ou 'nao')");
-
-			String resposta_busca = sc.nextLine();
-
-			while (resposta_busca.equalsIgnoreCase("sim")) {
-				InserirFuncionario();
+			boolean loginInserido = Funcionario_Dao.inserirLogin(funcionarioId, login, senha);
+			if (loginInserido) {
+				System.out.println("Funcionário e login inseridos com sucesso!");
 
 				System.out.println();
 				System.out.println();
 				System.out.println();
+				System.out.println("Deseja fazer uma nova inserção? (Digite 'sim' ou 'nao')");
 
-				if (resposta_busca.equalsIgnoreCase("nao")) {
-					cabecalho_funcionarios();
-					opções_switch_funcionario();
+				String resposta_busca = sc.nextLine();
+
+				while (resposta_busca.equalsIgnoreCase("sim")) {
+					InserirFuncionario();
+
+					System.out.println();
+					System.out.println();
+					System.out.println();
+
+					if (resposta_busca.equalsIgnoreCase("nao")) {
+						cabecalho_funcionarios();
+						opções_switch_funcionario();
+					}
+				}
+
+			} else {
+				System.out.println("Falha ao inserir o funcionário.");
+
+				System.out.println();
+				System.out.println();
+				System.out.println();
+				System.out.println("Deseja fazer uma nova tentativa? (Digite 'sim' ou 'nao')");
+
+				String resposta_busca = sc.nextLine();
+
+				while (resposta_busca.equalsIgnoreCase("sim")) {
+					InserirFuncionario();
+
+					System.out.println();
+					System.out.println();
+					System.out.println();
+
+					if (resposta_busca.equalsIgnoreCase("nao")) {
+						cabecalho_funcionarios();
+						opções_switch_funcionario();
+					}
 				}
 			}
-		}}
+		}
 	}
 
 	public static void deletarFuncionarioPorId() {
@@ -1616,4 +1807,5 @@ public class Program {
 			}
 		}
 	}
+
 }
