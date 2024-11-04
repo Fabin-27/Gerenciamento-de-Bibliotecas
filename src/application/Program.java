@@ -9,6 +9,7 @@ import DAO.Funcionario_Dao;
 import DAO.Livro_Dao;
 //import db.DB;
 import entities.Clientes;
+import entities.Emprestimos;
 import entities.Funcionarios;
 import entities.Livros;
 
@@ -149,12 +150,33 @@ public class Program {
 	            	return;
 
 	            case 4:
+	            	
+	            	System.out.println("1 - Buscar Empréstimo por Cliente");
+	            	System.out.println("2 - Buscar Empréstimo por Livro");
+	            	
+	            	int t = sc.nextInt();
+	            	
+	            	switch (t) {
+	            	
+	            	case 1:
+	            		
+	            		consultarEmprestimosPorCliente();
+	            		
+	            		return;
+	            		
+	            	case 2:
+	            		
+	            		consultarEmprestimosPorLivro();
+	            		
+	            		return;
+	            	
+	            	}
 
 	            	return;
 
 	            case 5:
 	                System.out.println("Voltando ao menu principal...");
-	                return;  // Volta para o menu principal
+	                return;
 
 	            default:
 	                System.out.println("Opção inválida. Tente novamente.");
@@ -247,7 +269,6 @@ public class Program {
 	        }
 	    }
 	}
-
 	
 	public static void registrarDevolucao() {
 
@@ -308,6 +329,62 @@ public class Program {
 		}   
 	}
     
+	public static void consultarEmprestimosPorCliente() {
+		
+		sc.nextLine();
+	    System.out.print("Digite o nome ou ID do cliente (ou 'cancelar' para sair): ");
+	    String z = sc.nextLine();
+
+	    if (z.equalsIgnoreCase("cancelar")) {
+	        return;
+	    }
+
+	    List<Emprestimos> emprestimos = Emprestimo_Dao.consultarEmprestimosPorCliente(z);
+
+	    if (emprestimos.isEmpty()) {
+	        System.out.println("Nenhum empréstimo encontrado para o cliente.");
+	    } else {
+	        System.out.printf("%-5s %-30s %-20s %-20s%n", "ID", "Livro", "Data Empréstimo", "Data Devolução");
+	        System.out.println("-----------------------------------------------------------");
+
+	        for (Emprestimos emprestimo : emprestimos) {
+	            System.out.printf("%-5d %-30s %-20s %-20s%n",
+	                emprestimo.getId(),
+	                emprestimo.getLivroTitulo(),
+	                emprestimo.getDataEmprestimo(),
+	                emprestimo.getDataDevolucao() != null ? emprestimo.getDataDevolucao() : "Não devolvido");
+	        }
+	    }
+	}
+	
+	public static void consultarEmprestimosPorLivro() {
+
+		sc.nextLine();
+	    System.out.print("Digite o título ou ID do livro (ou 'cancelar' para sair): ");
+	    String input = sc.nextLine();
+
+	    if (input.equalsIgnoreCase("cancelar")) {
+	        return;
+	    }
+
+	    List<Emprestimos> emprestimos = Emprestimo_Dao.consultarEmprestimosPorLivro(input);
+
+	    if (emprestimos.isEmpty()) {
+	        System.out.println("Nenhum empréstimo encontrado para o livro.");
+	    } else {
+	        System.out.printf("%-5s %-30s %-20s %-20s%n", "ID", "Cliente", "Data Empréstimo", "Data Devolução");
+	        System.out.println("-----------------------------------------------------------");
+
+	        for (Emprestimos emprestimo : emprestimos) {
+	            System.out.printf("%-5d %-30s %-20s %-20s%n",
+	                emprestimo.getId(),
+	                emprestimo.getClienteNome(),
+	                emprestimo.getDataEmprestimo(),
+	                emprestimo.getDataDevolucao() != null ? emprestimo.getDataDevolucao() : "Não devolvido");
+	        }
+	    }
+	}
+
 	// ÁREA DOS FUNCIONÁRIOS
 	public static void cabecalho_funcionarios() {
 

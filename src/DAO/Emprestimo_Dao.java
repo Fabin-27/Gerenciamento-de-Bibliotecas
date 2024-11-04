@@ -4,8 +4,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import db.DB;
+import entities.Emprestimos;
 
 public class Emprestimo_Dao {
 	
@@ -131,6 +134,73 @@ public class Emprestimo_Dao {
 	        e.printStackTrace();
 	    }
 	}
+	
+	public static List<Emprestimos> consultarEmprestimosPorCliente(String clienteNomeOuId) {
+	    List<Emprestimos> emprestimos = new ArrayList<>();
+	    String sql = "SELECT e.id, e.LivroId, e.ClienteId, e.dataEmprestimo, e.dataDevolucao, l.titulo AS livroTitulo " +
+	                 "FROM Emprestimos e " +
+	                 "JOIN Clientes c ON e.ClienteId = c.id " +
+	                 "JOIN Livros l ON e.LivroId = l.id " +
+	                 "WHERE c.nome LIKE ? OR c.id = ?";
+
+	    try (Connection conn = DB.getConnection();
+	         PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+	        // Para buscar por nome ou ID
+	        stmt.setString(1, "%" + clienteNomeOuId + "%");
+	        stmt.setString(2, clienteNomeOuId);
+	        ResultSet rs = stmt.executeQuery();
+
+	        while (rs.next()) {
+	            Emprestimos emprestimo = new Emprestimos();
+	            emprestimo.setId(rs.getInt("id"));
+	            emprestimo.setLivroId(rs.getInt("LivroId"));
+	            emprestimo.setClienteId(rs.getInt("ClienteId"));
+	            emprestimo.setDataEmprestimo(rs.getString("dataEmprestimo"));
+	            emprestimo.setDataDevolucao(rs.getString("dataDevolucao"));
+	            emprestimo.setLivroTitulo(rs.getString("livroTitulo"));
+	            emprestimos.add(emprestimo);
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return emprestimos;
+	}
+	
+	public static List<Emprestimos> consultarEmprestimosPorLivro(String livroTituloOuId) {
+	    List<Emprestimos> emprestimos = new ArrayList<>();
+	    String sql = "SELECT e.id, e.LivroId, e.ClienteId, e.dataEmprestimo, e.dataDevolucao, c.nome AS clienteNome " +
+	                 "FROM Emprestimos e " +
+	                 "JOIN Livros l ON e.LivroId = l.id " +
+	                 "JOIN Clientes c ON e.ClienteId = c.id " +
+	                 "WHERE l.titulo LIKE ? OR l.id = ?";
+
+	    try (Connection conn = DB.getConnection();
+	         PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+	        stmt.setString(1, "%" + livroTituloOuId + "%");
+	        stmt.setString(2, livroTituloOuId);
+	        ResultSet rs = stmt.executeQuery();
+
+	        while (rs.next()) {
+	            Emprestimos emprestimo = new Emprestimos();
+	            emprestimo.setId(rs.getInt("id"));
+	            emprestimo.setLivroId(rs.getInt("LivroId"));
+	            emprestimo.setClienteId(rs.getInt("ClienteId"));
+	            emprestimo.setDataEmprestimo(rs.getString("dataEmprestimo"));
+	            emprestimo.setDataDevolucao(rs.getString("dataDevolucao"));
+	            emprestimo.setClienteNome(rs.getString("clienteNome"));
+	            emprestimos.add(emprestimo);
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return emprestimos;
+	}
+
+
 
 
 

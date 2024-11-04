@@ -2,13 +2,20 @@ package entities;
 
 public class Emprestimos {
 	
+	private int id;
 	private int LivroId;
 	private int ClienteId;
 	private String DataEmprestimo;
 	private String DataDevolucao;
+    private String livroTitulo;
+    private String clienteNome;
 	
+	public Emprestimos() {
+		
+	}
 	
-	public Emprestimos(int livroId, int clienteId, String dataEmprestimo, String dataDevolucao, String status) {
+	public Emprestimos(int id, int livroId, int clienteId, String dataEmprestimo, String dataDevolucao, String status) {
+		this.setId(id);
 		LivroId = livroId;
 		ClienteId = clienteId;
 		DataEmprestimo = dataEmprestimo;
@@ -51,6 +58,30 @@ public class Emprestimos {
 	public String toString() {
 		return "Emprestimos [LivroId=" + LivroId + ", ClienteId=" + ClienteId + ", DataEmprestimo=" + DataEmprestimo
 				+ ", DataDevolucao=" + DataDevolucao + "]";
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+	
+	public String getLivroTitulo() {
+        return livroTitulo;
+    }
+
+    public void setLivroTitulo(String livroTitulo) {
+        this.livroTitulo = livroTitulo;
+    }
+
+	public String getClienteNome() {
+		return clienteNome;
+	}
+
+	public void setClienteNome(String clienteNome) {
+		this.clienteNome = clienteNome;
 	}
 
 
