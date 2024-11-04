@@ -163,60 +163,91 @@ public class Program {
 	}
 
 	public static void registrarEmprestimoUsuario() {
+	    sc.nextLine();
+	    
+	    System.out.print("Digite o ID do livro (ou 'cancelar' para sair): ");
+	    String livroIdInput = sc.nextLine();
+	    if (livroIdInput.equalsIgnoreCase("cancelar")) {
+	        cabecalho_emprestimos();
+	        opções_switch_emprestimos();
+	        return;
+	    }
 
-		sc.nextLine();
-		System.out.print("Digite o ID do livro (ou 'cancelar' para sair): ");
-		String livroIdInput = sc.nextLine();
-		if (livroIdInput.equalsIgnoreCase("cancelar")) {
-			cabecalho_emprestimos();
-			opções_switch_emprestimos();
-			return;
-		}
-		int livroId = Integer.parseInt(livroIdInput);
+	    int livroId;
+	    try {
+	        livroId = Integer.parseInt(livroIdInput);
+	    } catch (NumberFormatException e) {
+	        System.out.println("ID do livro inválido.");
+	        return;
+	    }
 
-		System.out.print("Digite o ID do cliente (ou 'cancelar' para sair): ");
-		String clienteIdInput = sc.nextLine();
-		if (clienteIdInput.equalsIgnoreCase("cancelar")) {
-			cabecalho_emprestimos();
-			opções_switch_emprestimos();
-			return;
-		}
-		int clienteId = Integer.parseInt(clienteIdInput);
+	    // Verifica se o livro está disponível para empréstimo
+	    if (!Emprestimo_Dao.verificarDisponibilidadeLivro(livroId)) {
+	        System.out.println("O livro não está disponível para empréstimo.");
+	        return;
+	    }
 
-		System.out.print("Digite a data de empréstimo (formato YYYY-MM-DD) ou 'cancelar' para sair: ");
-		String dataEmprestimo = sc.nextLine();
-		if (dataEmprestimo.equalsIgnoreCase("cancelar")) {
-			cabecalho_emprestimos();
-			opções_switch_emprestimos();
-			return;
-		}
+	    System.out.print("Digite o ID do cliente (ou 'cancelar' para sair): ");
+	    String clienteIdInput = sc.nextLine();
+	    if (clienteIdInput.equalsIgnoreCase("cancelar")) {
+	        cabecalho_emprestimos();
+	        opções_switch_emprestimos();
+	        return;
+	    }
 
-		boolean sucesso = Emprestimo_Dao.registrarEmprestimo(livroId, clienteId, dataEmprestimo);
+	    int clienteId;
+	    try {
+	        clienteId = Integer.parseInt(clienteIdInput);
+	    } catch (NumberFormatException e) {
+	        System.out.println("ID do cliente inválido.");
+	        return;
+	    }
 
-		if (sucesso) {
-			System.out.println("Empréstimo registrado com sucesso!");
-			System.out.println("Deseja registrar outro empréstimo? (Digite 'sim' ou 'não')");
-			String resposta = sc.nextLine();
+	    // Verifica se o cliente já tem empréstimos ativos
+	    if (Emprestimo_Dao.verificarEmprestimosAtivos(clienteId)) {
+	        System.out.println("O cliente já possui um empréstimo ativo. Não é possível registrar um novo empréstimo.");
+	        return;
+	    }
 
-			if (resposta.equalsIgnoreCase("sim")) {
-				registrarEmprestimoUsuario();
-			} else {
-				cabecalho_emprestimos();
-				opções_switch_emprestimos();
-			}
-		} else {
-			System.out.println("Falha ao registrar o empréstimo.");
-			System.out.println("Deseja tentar novamente? (Digite 'sim' ou 'não')");
-			String resposta = sc.nextLine();
+	    System.out.print("Digite a data de empréstimo (formato YYYY-MM-DD) ou 'cancelar' para sair: ");
+	    String dataEmprestimo = sc.nextLine();
+	    if (dataEmprestimo.equalsIgnoreCase("cancelar")) {
+	        cabecalho_emprestimos();
+	        opções_switch_emprestimos();
+	        return;
+	    }
 
-			if (resposta.equalsIgnoreCase("sim")) {
-				registrarEmprestimoUsuario();
-			} else {
-				cabecalho_emprestimos();
-				opções_switch_emprestimos();
-			}
-		}
+	    // Registrar o empréstimo
+	    boolean sucesso = Emprestimo_Dao.registrarEmprestimo(livroId, clienteId, dataEmprestimo);
+
+	    if (sucesso) {
+	        // Atualiza o status do livro para "emprestado"
+	    	Emprestimo_Dao.atualizarStatusLivro(livroId, "emprestado");
+
+	        System.out.println("Empréstimo registrado com sucesso!");
+	        System.out.println("Deseja registrar outro empréstimo? (Digite 'sim' ou 'não')");
+	        String resposta = sc.nextLine();
+
+	        if (resposta.equalsIgnoreCase("sim")) {
+	            registrarEmprestimoUsuario();
+	        } else {
+	            cabecalho_emprestimos();
+	            opções_switch_emprestimos();
+	        }
+	    } else {
+	        System.out.println("Falha ao registrar o empréstimo.");
+	        System.out.println("Deseja tentar novamente? (Digite 'sim' ou 'não')");
+	        String resposta = sc.nextLine();
+
+	        if (resposta.equalsIgnoreCase("sim")) {
+	            registrarEmprestimoUsuario();
+	        } else {
+	            cabecalho_emprestimos();
+	            opções_switch_emprestimos();
+	        }
+	    }
 	}
+
 	
 	public static void registrarDevolucao() {
 
@@ -277,9 +308,6 @@ public class Program {
 		}   
 	}
     
-	
-	
-
 	// ÁREA DOS FUNCIONÁRIOS
 	public static void cabecalho_funcionarios() {
 

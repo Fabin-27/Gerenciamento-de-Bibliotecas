@@ -7,7 +7,8 @@ public class Emprestimos {
 	private String DataEmprestimo;
 	private String DataDevolucao;
 	
-	public Emprestimos(int livroId, int clienteId, String dataEmprestimo, String dataDevolucao) {
+	
+	public Emprestimos(int livroId, int clienteId, String dataEmprestimo, String dataDevolucao, String status) {
 		LivroId = livroId;
 		ClienteId = clienteId;
 		DataEmprestimo = dataEmprestimo;
@@ -51,11 +52,6 @@ public class Emprestimos {
 		return "Emprestimos [LivroId=" + LivroId + ", ClienteId=" + ClienteId + ", DataEmprestimo=" + DataEmprestimo
 				+ ", DataDevolucao=" + DataDevolucao + "]";
 	}
-	
-	
-	
-	
-	
-	
+
 
 }

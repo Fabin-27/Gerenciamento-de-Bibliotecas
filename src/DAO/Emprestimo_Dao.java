@@ -78,7 +78,61 @@ public class Emprestimo_Dao {
 	    }
 	}
 
+	public static boolean verificarEmprestimosAtivos(int clienteId) {
+	    String sql = "SELECT COUNT(*) FROM Emprestimos WHERE ClienteId = ? AND dataDevolucao IS NULL";
+
+	    try (Connection conn = DB.getConnection();
+	         PreparedStatement stmt = conn.prepareStatement(sql)) {
+	        stmt.setInt(1, clienteId);
+	        ResultSet rs = stmt.executeQuery();
+
+	        if (rs.next()) {
+	            return rs.getInt(1) > 0; // Retorna true se houver empréstimos ativos
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return false; // Retorna false se não houver empréstimos ativos
+	}
 	
+	public static boolean verificarDisponibilidadeLivro(int livroId) {
+	    String sql = "SELECT status FROM Livros WHERE id = ?";
+
+	    try (Connection conn = DB.getConnection();
+	         PreparedStatement stmt = conn.prepareStatement(sql)) {
+	        stmt.setInt(1, livroId);
+	        ResultSet rs = stmt.executeQuery();
+
+	        if (rs.next()) {
+	            String status = rs.getString("status");
+	            return "disponivel".equalsIgnoreCase(status); // Retorna true se o status for 'disponivel'
+	        } else {
+	            System.out.println("Livro não encontrado.");
+	            return false;
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        return false;
+	    }
+	}
+
+	public static void atualizarStatusLivro(int livroId, String status) {
+	    String sql = "UPDATE Livros SET status = ? WHERE id = ?";
+
+	    try (Connection conn = DB.getConnection();
+	         PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+	        stmt.setString(1, status);
+	        stmt.setInt(2, livroId);
+	        stmt.executeUpdate();
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	}
+
+
 
 
 }

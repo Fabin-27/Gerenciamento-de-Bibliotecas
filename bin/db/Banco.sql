@@ -7,7 +7,7 @@ CREATE TABLE clientes (
     endereco VARCHAR(255),
     CONSTRAINT chk_cpf CHECK (LENGTH(cpf) = 11)
 );
-select * from Clientes
+select * from Clientes;
 
 CREATE TABLE Livros (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -17,7 +17,12 @@ CREATE TABLE Livros (
     anoPublicacao VARCHAR(20) NOT NULL
 );
 
-select * from livros
+select * from livros;
+delete from Livros where id = 5;
+SELECT id, status FROM Livros WHERE id = 5;
+
+
+
 
 CREATE TABLE Emprestimos (
     Id INT PRIMARY KEY AUTO_INCREMENT,
@@ -29,6 +34,9 @@ CREATE TABLE Emprestimos (
     FOREIGN KEY (LivroId) REFERENCES Livros(Id),
     FOREIGN KEY (ClienteId) REFERENCES Clientes(Id)
 );
+select * from Emprestimos;
+delete from Emprestimos where id = 8;
+DESCRIBE emprestimos;
 
 CREATE TABLE Funcionarios (
     id INT PRIMARY KEY AUTO_INCREMENT,
@@ -48,5 +56,3 @@ CREATE TABLE Login (
     senha VARCHAR(255) NOT NULL,
     FOREIGN KEY (funcionario_id) REFERENCES Funcionarios(id) ON DELETE CASCADE
 );
-
-INSERT INTO Login (funcionario_id, login, senha) VALUES (4, 'admin', '1q2w3e4r');

@@ -6,13 +6,15 @@ public class Livros {
     private String autor;
     private String isbn;
     private String anoPublicacao;
+    private String status;
 
-    public Livros(int id, String titulo, String autor, String isbn, String anoPublicacao) {
+    public Livros(int id, String titulo, String autor, String isbn, String anoPublicacao, String status) {
     	this.setId(id);
         this.titulo = titulo;
         this.autor = autor;
         this.isbn = isbn;
         this.anoPublicacao = anoPublicacao;
+        this.status = status;
     }
     
     public int getId() {
@@ -59,5 +61,13 @@ public class Livros {
     public String toString() {
         return "ID: " + id + ", Título: " + titulo + ", Autor: " + autor + ", ISBN: " + isbn + ", Ano de Publicação: " + anoPublicacao;
     }
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
 
 }

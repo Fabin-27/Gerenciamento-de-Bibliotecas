@@ -115,7 +115,8 @@ public class Livro_Dao {
 	                    rs.getString("titulo"),
 	                    rs.getString("autor"),
 	                    rs.getString("isbn"),
-	                    rs.getString("anoPublicacao")
+	                    rs.getString("anoPublicacao"),
+	                    rs.getString("status")
 	                );
 	            }
 	        }
@@ -134,7 +135,7 @@ public class Livro_Dao {
 			try (ResultSet rs = stmt.executeQuery()) {
 				while (rs.next()) {
 					Livros livro = new Livros(rs.getInt("id"), rs.getString("titulo"), rs.getString("autor"),
-							rs.getString("isbn"), rs.getString("anoPublicacao"));
+							rs.getString("isbn"), rs.getString("anoPublicacao"), rs.getString("status"));
 					livros.add(livro);
 				}
 			}
