@@ -9,6 +9,7 @@ public class Emprestimos {
 	private String DataDevolucao;
     private String livroTitulo;
     private String clienteNome;
+    private String livroStatus;
 	
 	public Emprestimos() {
 		
@@ -82,6 +83,14 @@ public class Emprestimos {
 
 	public void setClienteNome(String clienteNome) {
 		this.clienteNome = clienteNome;
+	}
+
+	public String getLivroStatus() {
+		return livroStatus;
+	}
+
+	public void setLivroStatus(String livroStatus) {
+		this.livroStatus = livroStatus;
 	}
 
 

@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +35,11 @@ public class Cliente_Dao {
 			int rowsInserted = stmt.executeUpdate();
 			return rowsInserted > 0;
 
-		} catch (SQLException e) {
+		} catch (SQLIntegrityConstraintViolationException e) {
+	        System.out.println("Erro: O cliente já está registrado. Verifique se o CPF ou e-mail já existe no sistema.");
+	        return false;
+
+	    }catch (SQLException e) {
 			e.printStackTrace();
 			return false;
 		}
@@ -154,8 +159,7 @@ public class Cliente_Dao {
 		return clientes;
 	}
 	
-
-	    public static List<Clientes> listarClientesEmOrdemAlfabetica() {
+	public static List<Clientes> listarClientesEmOrdemAlfabetica() {
 	        List<Clientes> clientes = new ArrayList<>();
 	        String sql = "SELECT * FROM Clientes ORDER BY nome ASC";
 

@@ -1,5 +1,6 @@
 package application;
 
+import java.time.LocalDate;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
@@ -14,12 +15,8 @@ import entities.Emprestimos;
 import entities.Funcionarios;
 import entities.Livros;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-
-public class Program {
-
+public class Program { 
+	
 	static Scanner sc = new Scanner(System.in);
 	static Cliente_Dao clienteDAO = new Cliente_Dao();
 	static Livro_Dao livroDAO = new Livro_Dao();
@@ -251,32 +248,20 @@ public class Program {
 	        return;
 	    }
 
-	    System.out.print("Digite a data de empréstimo (formato YYYY-MM-DD) ou 'cancelar' para sair: ");
-	    String dataEmprestimo = sc.nextLine();
-	    if (dataEmprestimo.equalsIgnoreCase("cancelar")) {
-	        cabecalho_emprestimos();
-	        opções_switch_emprestimos();
-	        return;
-	    }
+	    // Obtém a data atual
+	    LocalDate dataEmprestimoParsed = LocalDate.now();
+	    System.out.println("Data de empréstimo registrada: " + dataEmprestimoParsed);
 
-	    // Verifica e calcula a data de devolução
-	    LocalDate dataEmprestimoParsed;
-	    try {
-	        dataEmprestimoParsed = LocalDate.parse(dataEmprestimo, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-	    } catch (DateTimeParseException e) {
-	        System.out.println("Formato de data inválido. Use o formato YYYY-MM-DD.");
-	        return;
-	    }
-
-	    // Define um período de 14 dias para a devolução
+	    // Define um período de 7 dias para a devolução
 	    LocalDate dataDevolucao = dataEmprestimoParsed.plusDays(7);
+	    System.out.println("A data de devolução será: " + dataDevolucao);
 
-	    System.out.println("Empréstimo registrado! A data de devolução será: " + dataDevolucao);
-
-	    boolean sucesso = Emprestimo_Dao.registrarEmprestimo(livroId, clienteId, dataEmprestimo);
+	    // Registrar o empréstimo
+	    boolean sucesso = Emprestimo_Dao.registrarEmprestimo(livroId, clienteId, dataEmprestimoParsed.toString());
 
 	    if (sucesso) {
 	        Emprestimo_Dao.atualizarStatusLivro(livroId, "emprestado");
+	        System.out.println("Empréstimo registrado com sucesso!");
 	        System.out.println("Deseja registrar outro empréstimo? (Digite 'sim' ou 'não')");
 	        String resposta = sc.nextLine();
 
@@ -377,49 +362,48 @@ public class Program {
 	    if (emprestimos.isEmpty()) {
 	        System.out.println("Nenhum empréstimo encontrado para o cliente.");
 	    } else {
-	        System.out.printf("%-5s %-30s %-20s %-20s%n", "ID", "Livro", "Data Empréstimo", "Data Devolução");
-	        System.out.println("-----------------------------------------------------------");
+	        System.out.printf("%-5s %-30s %-20s %-20s %-15s%n", "ID", "Livro", "Data Empréstimo", "Data Devolução", "Status do Livro");
+	        System.out.println("----------------------------------------------------------------------------------");
 
 	        for (Emprestimos emprestimo : emprestimos) {
 	            LocalDate dataEmprestimoParsed = LocalDate.parse(emprestimo.getDataEmprestimo());
-	            LocalDate dataDevolucao = dataEmprestimoParsed.plusDays(7); // Calcula a data de devolução
-	            System.out.printf("%-5d %-30s %-20s %-20s%n",
+	            LocalDate dataDevolucao = dataEmprestimoParsed.plusDays(7);
+	            System.out.printf("%-5d %-30s %-20s %-20s %-15s%n",
 	                emprestimo.getId(),
 	                emprestimo.getLivroTitulo(),
 	                emprestimo.getDataEmprestimo(),
-	                emprestimo.getDataDevolucao() != null ? emprestimo.getDataDevolucao() : dataDevolucao.toString()); // Usa a data de devolução calculada
+	                emprestimo.getDataDevolucao() != null ? emprestimo.getDataDevolucao() : dataDevolucao.toString(),
+	                emprestimo.getLivroStatus());
 	        }
 	    }
 	}
 
-
-	
 	public static void consultarEmprestimosPorLivro() {
-
-		sc.nextLine();
+	    sc.nextLine();
 	    System.out.print("Digite o título ou ID do livro (ou 'cancelar' para sair): ");
-	    String p = sc.nextLine();
+	    String livroIdOuTitulo = sc.nextLine();
 
-	    if (p.equalsIgnoreCase("cancelar")) {
+	    if (livroIdOuTitulo.equalsIgnoreCase("cancelar")) {
 	        return;
 	    }
 
-	    List<Emprestimos> emprestimos = Emprestimo_Dao.consultarEmprestimosPorLivro(p);
+	    List<Emprestimos> emprestimos = Emprestimo_Dao.consultarEmprestimosPorLivro(livroIdOuTitulo);
 
 	    if (emprestimos.isEmpty()) {
-	        System.out.println("Nenhum empréstimo encontrado para o cliente.");
+	        System.out.println("Nenhum empréstimo encontrado para o livro.");
 	    } else {
-	        System.out.printf("%-5s %-30s %-20s %-20s%n", "ID", "Cliente", "Data Empréstimo", "Data Devolução");
-	        System.out.println("-----------------------------------------------------------");
+	        System.out.printf("%-5s %-30s %-20s %-20s %-15s%n", "ID", "Livro", "Data Empréstimo", "Data Devolução", "Status do Livro");
+	        System.out.println("----------------------------------------------------------------------------------");
 
 	        for (Emprestimos emprestimo : emprestimos) {
 	            LocalDate dataEmprestimoParsed = LocalDate.parse(emprestimo.getDataEmprestimo());
 	            LocalDate dataDevolucao = dataEmprestimoParsed.plusDays(7); // Calcula a data de devolução
-	            System.out.printf("%-5d %-30s %-20s %-20s%n",
+	            System.out.printf("%-5d %-30s %-20s %-20s %-15s%n",
 	                emprestimo.getId(),
-	                emprestimo.getClienteNome(),
+	                emprestimo.getLivroTitulo(),
 	                emprestimo.getDataEmprestimo(),
-	                emprestimo.getDataDevolucao() != null ? emprestimo.getDataDevolucao() : dataDevolucao.toString()); // Usa a data de devolução calculada
+	                emprestimo.getDataDevolucao() != null ? emprestimo.getDataDevolucao() : dataDevolucao.toString(),
+	                emprestimo.getLivroStatus());
 	        }
 	    }
 	}
@@ -1038,108 +1022,100 @@ public class Program {
 		}}catch (InputMismatchException e) {
 	        System.out.println("Entrada inválida. Por favor, digite um número.");
 	        sc.nextLine();
+	        opções_switch_cliente();
+	        
+	    } 
+	}
+
+
+	
+
+	public static void InserirCliente() {
+		
+		// cpf duplicado resolvido
+		
+		
+	    try {
+	        sc.nextLine();
+
+	        System.out.print("Digite o nome do cliente (ou 'cancelar' para sair): ");
+	        String nome = sc.nextLine();
+	        if (nome.equalsIgnoreCase("cancelar")) {
+	            System.out.println("Operação cancelada.");
+	            cabecalho_clientes();
+	            opções_switch_cliente();
+	            return;
+	        }
+
+	        System.out.print("Digite o CPF do cliente (ou 'cancelar' para sair): ");
+	        String cpf = sc.nextLine();
+	        if (cpf.equalsIgnoreCase("cancelar")) {
+	            System.out.println("Operação cancelada.");
+	            cabecalho_clientes();
+	            opções_switch_cliente();
+	            return;
+	        }
+
+	        System.out.print("Digite o email do cliente (ou 'cancelar' para sair): ");
+	        String email = sc.nextLine();
+	        if (email.equalsIgnoreCase("cancelar")) {
+	            System.out.println("Operação cancelada.");
+	            cabecalho_clientes();
+	            opções_switch_cliente();
+	            return;
+	        }
+
+	        System.out.print("Digite o telefone do cliente (ou 'cancelar' para sair): ");
+	        String telefone = sc.nextLine();
+	        if (telefone.equalsIgnoreCase("cancelar")) {
+	            System.out.println("Operação cancelada.");
+	            cabecalho_clientes();
+	            opções_switch_cliente();
+	            return;
+	        }
+
+	        System.out.print("Digite o endereço do cliente (ou 'cancelar' para sair): ");
+	        String endereco = sc.nextLine();
+	        if (endereco.equalsIgnoreCase("cancelar")) {
+	            System.out.println("Operação cancelada.");
+	            cabecalho_clientes();
+	            opções_switch_cliente();
+	            return;
+	        }
+
+	        boolean inserido = Cliente_Dao.inserirCliente(nome, cpf, email, telefone, endereco);
+	        if (inserido) {
+	            System.out.println("Cliente inserido com sucesso!");
+
+	            System.out.println("Deseja fazer uma nova inserção? (Digite 'sim' ou 'nao')");
+	            String resposta_busca = sc.nextLine();
+
+	            if (resposta_busca.equalsIgnoreCase("sim")) {
+	                InserirCliente();
+	            } else {
+	                cabecalho_clientes();
+	                opções_switch_cliente();
+	            }
+	        } 
+
+	    } catch (Exception e) {
+	    	
+	    	System.out.println("Falha ao inserir o cliente.");
+	        
+	        System.out.println("Deseja tentar novamente? (Digite 'sim' ou 'nao')");
+	        String resposta = sc.nextLine();
+
+	        if (resposta.equalsIgnoreCase("sim")) {
+	            InserirCliente();
+	        } else {
+	            cabecalho_clientes();
+	            opções_switch_cliente();
+	        }
 	    }
 	}
 
-	public static void InserirCliente() {
 
-		sc.nextLine();
-		System.out.print("Digite o nome do cliente (ou 'cancelar' para sair): ");
 
-		String nome = sc.nextLine();
-		if (nome.equalsIgnoreCase("cancelar")) {
-			System.out.println("Operação cancelada.");
-			cabecalho_clientes();
-			opções_switch_cliente();
-		}
-
-		System.out.print("Digite o CPF do cliente (ou 'cancelar' para sair): ");
-		String cpf = sc.nextLine();
-		if (cpf.equalsIgnoreCase("cancelar")) {
-			System.out.println("Operação cancelada.");
-			cabecalho_clientes();
-			opções_switch_cliente();
-		}
-
-		System.out.print("Digite o email do cliente (ou 'cancelar' para sair): ");
-		String email = sc.nextLine();
-		if (email.equalsIgnoreCase("cancelar")) {
-			System.out.println("Operação cancelada.");
-			cabecalho_clientes();
-			opções_switch_cliente();
-		}
-
-		System.out.print("Digite o telefone do cliente (ou 'cancelar' para sair): ");
-		String telefone = sc.nextLine();
-		if (telefone.equalsIgnoreCase("cancelar")) {
-			System.out.println("Operação cancelada.");
-			cabecalho_clientes();
-			opções_switch_cliente();
-		}
-
-		System.out.print("Digite o endereço do cliente (ou 'cancelar' para sair): ");
-		String endereco = sc.nextLine();
-		if (endereco.equalsIgnoreCase("cancelar")) {
-			System.out.println("Operação cancelada.");
-			cabecalho_clientes();
-			opções_switch_cliente();
-		}
-
-		boolean inserido = Cliente_Dao.inserirCliente(nome, cpf, email, telefone, endereco);
-		if (inserido) {
-			System.out.println("Cliente inserido com sucesso!");
-
-			System.out.println();
-			System.out.println();
-			System.out.println();
-			System.out.println("Deseja fazer uma nova inserção? (Digite 'sim' ou 'nao')");
-
-			String resposta_busca = sc.nextLine();
-
-			while (resposta_busca.equalsIgnoreCase("sim")) {
-
-				InserirCliente();
-
-				System.out.println();
-				System.out.println();
-				System.out.println();
-
-				if (resposta_busca.equalsIgnoreCase("nao")) {
-
-					cabecalho_clientes();
-					opções_switch_cliente();
-
-				}
-			}
-
-		} else {
-			System.out.println("Falha ao inserir o cliente.");
-
-			System.out.println();
-			System.out.println();
-			System.out.println();
-			System.out.println("Deseja fazer uma nova tentativa? (Digite 'sim' ou 'nao')");
-
-			String resposta_busca = sc.nextLine();
-
-			while (resposta_busca.equalsIgnoreCase("sim")) {
-
-				InserirCliente();
-
-				System.out.println();
-				System.out.println();
-				System.out.println();
-
-				if (resposta_busca.equalsIgnoreCase("nao")) {
-
-					cabecalho_clientes();
-					opções_switch_cliente();
-
-				}
-			}
-
-		}
-	}
 
 	public static void deletarClientePorId() {
 

@@ -137,7 +137,7 @@ public class Emprestimo_Dao {
 	
 	public static List<Emprestimos> consultarEmprestimosPorCliente(String clienteIdOuNome) {
 	    List<Emprestimos> emprestimos = new ArrayList<>();
-	    String sql = "SELECT e.id, l.titulo AS livroTitulo, e.dataEmprestimo, e.dataDevolucao " +
+	    String sql = "SELECT e.id, l.titulo AS livroTitulo, e.dataEmprestimo, e.dataDevolucao, l.status AS livroStatus " +
 	                 "FROM Emprestimos e " +
 	                 "JOIN Livros l ON e.livroId = l.id " +
 	                 "JOIN Clientes c ON e.clienteId = c.id " +
@@ -155,7 +155,8 @@ public class Emprestimo_Dao {
 	                emprestimo.setId(rs.getInt("id"));
 	                emprestimo.setLivroTitulo(rs.getString("livroTitulo"));
 	                emprestimo.setDataEmprestimo(rs.getString("dataEmprestimo"));
-	                emprestimo.setDataDevolucao(rs.getString("dataDevolucao")); // Adiciona a data de devolução
+	                emprestimo.setDataDevolucao(rs.getString("dataDevolucao"));
+	                emprestimo.setLivroStatus(rs.getString("livroStatus")); // Adiciona o status do livro
 
 	                emprestimos.add(emprestimo);
 	            }
@@ -167,13 +168,11 @@ public class Emprestimo_Dao {
 	    return emprestimos;
 	}
 
-	
 	public static List<Emprestimos> consultarEmprestimosPorLivro(String livroIdOuTitulo) {
 	    List<Emprestimos> emprestimos = new ArrayList<>();
-	    String sql = "SELECT e.id, c.nome AS clienteNome, e.dataEmprestimo, e.dataDevolucao " +
+	    String sql = "SELECT e.id, l.titulo AS livroTitulo, e.dataEmprestimo, e.dataDevolucao, l.status AS livroStatus " +
 	                 "FROM Emprestimos e " +
 	                 "JOIN Livros l ON e.livroId = l.id " +
-	                 "JOIN Clientes c ON e.clienteId = c.id " +
 	                 "WHERE l.titulo = ? OR l.id = ?";
 
 	    try (Connection conn = DB.getConnection();
@@ -186,9 +185,10 @@ public class Emprestimo_Dao {
 	            while (rs.next()) {
 	                Emprestimos emprestimo = new Emprestimos();
 	                emprestimo.setId(rs.getInt("id"));
-	                emprestimo.setClienteNome(rs.getString("clienteNome")); // Você pode precisar adicionar um método getClienteNome na classe Emprestimos
+	                emprestimo.setLivroTitulo(rs.getString("livroTitulo"));
 	                emprestimo.setDataEmprestimo(rs.getString("dataEmprestimo"));
-	                emprestimo.setDataDevolucao(rs.getString("dataDevolucao")); // Adiciona a data de devolução
+	                emprestimo.setDataDevolucao(rs.getString("dataDevolucao"));
+	                emprestimo.setLivroStatus(rs.getString("livroStatus")); // Adiciona o status do livro
 
 	                emprestimos.add(emprestimo);
 	            }
@@ -199,7 +199,6 @@ public class Emprestimo_Dao {
 
 	    return emprestimos;
 	}
-
 
 	public static Integer obterLivroIdPorNome(String nomeLivro) {
 	    String sql = "SELECT id FROM Livros WHERE titulo = ?";
