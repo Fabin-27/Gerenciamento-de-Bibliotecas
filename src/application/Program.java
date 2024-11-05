@@ -1,5 +1,6 @@
 package application;
 
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -12,6 +13,10 @@ import entities.Clientes;
 import entities.Emprestimos;
 import entities.Funcionarios;
 import entities.Livros;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 public class Program {
 
@@ -39,46 +44,53 @@ public class Program {
 	}
 
 	public static void switch_inicial() {
+		
 		while (true) {
-			System.out.println("Digite uma opção:");
-			System.out.println("0 - Sair");
-			System.out.println("1 - Menu de Clientes");
-			System.out.println("2 - Menu de Livros");
-			System.out.println("3 - Menu de Funcionários");
-			System.out.println("4 - Menu de Emprestimos");
+		    try {
+		        System.out.println("Digite uma opção:");
+		        System.out.println("0 - Sair");
+		        System.out.println("1 - Menu de Clientes");
+		        System.out.println("2 - Menu de Livros");
+		        System.out.println("3 - Menu de Funcionários");
+		        System.out.println("4 - Menu de Empréstimos");
 
-			int x = sc.nextInt();
+		        int x = sc.nextInt();
 
-			switch (x) {
-			case 0:
-				System.out.println("Até a próxima :)");
-				System.exit(0);
-				break;
+		        switch (x) {
+		            case 0:
+		                System.out.println("Até a próxima :)");
+		                System.exit(0);
+		                break;
 
-			case 1:
-				cabecalho_clientes();
-				opções_switch_cliente();
-				return;
+		            case 1:
+		                cabecalho_clientes();
+		                opções_switch_cliente();
+		                return;
 
-			case 2:
-				cabecalho_Livros();
-				opções_switch_livro();
-				return;
+		            case 2:
+		                cabecalho_Livros();
+		                opções_switch_livro();
+		                return;
 
-			case 3:
-				cabecalho_funcionarios();
-				opções_switch_funcionario();
+		            case 3:
+		                cabecalho_funcionarios();
+		                opções_switch_funcionario();
+		                return;
 
-				return;
-			case 4:
-				cabecalho_emprestimos();
-				opções_switch_emprestimos();
-				return;
+		            case 4:
+		                cabecalho_emprestimos();
+		                opções_switch_emprestimos();
+		                return;
 
-			default:
-				System.out.println("Opção inválida. Por favor, digite 0, 1 ou 2.");
-			}
+		            default:
+		                System.out.println("Opção inválida. Por favor, digite 0, 1, 2, 3 ou 4.");
+		        }
+		    } catch (InputMismatchException e) {
+		        System.out.println("Entrada inválida. Por favor, digite um número.");
+		        sc.nextLine();
+		    }
 		}
+
 	}
 
 	public static void login() {
@@ -97,6 +109,7 @@ public class Program {
 		}
 	}
 
+	
 	// ÁREA DE EMPRESTIMOS
 	public static void cabecalho_emprestimos() {
 
@@ -109,11 +122,13 @@ public class Program {
 	}
 
 	public static void opções_switch_emprestimos() {
+		
+		try {
 		while (true) {
 			System.out.println("Digite uma opção:");
 			System.out.println("0 - Sair do sistema");
 			System.out.println("1 - Registrar Empréstimo");
-			System.out.println("2 - Listar Empréstimos");
+			System.out.println("2 - Histórico de Empréstimos");
 			System.out.println("3 - Devolver Livro");
 			System.out.println("4 - Buscar Empréstimo por Cliente ou Livro");
 			System.out.println("5 - Voltar ao Menu Principal");
@@ -127,7 +142,7 @@ public class Program {
 	                break;
 
 	            case 1:
-	                registrarEmprestimoUsuario();
+	            	registrarEmprestimoUsuario();
 	                return;
 
 	            case 2:
@@ -181,11 +196,16 @@ public class Program {
 	            default:
 	                System.out.println("Opção inválida. Tente novamente.");
 	        }
-		}
+		}}catch (InputMismatchException e) {
+	        System.out.println("Entrada inválida. Por favor, digite um número.");
+	        sc.nextLine();
+	    }
 	}
 
 	public static void registrarEmprestimoUsuario() {
 	    sc.nextLine();
+	    
+	    exibirLivrosEmOrdemAlfabetica();
 	    
 	    System.out.print("Digite o ID do livro (ou 'cancelar' para sair): ");
 	    String livroIdInput = sc.nextLine();
@@ -203,11 +223,12 @@ public class Program {
 	        return;
 	    }
 
-	    // Verifica se o livro está disponível para empréstimo
 	    if (!Emprestimo_Dao.verificarDisponibilidadeLivro(livroId)) {
 	        System.out.println("O livro não está disponível para empréstimo.");
 	        return;
 	    }
+	    
+	    exibirClientesEmOrdemAlfabetica();
 
 	    System.out.print("Digite o ID do cliente (ou 'cancelar' para sair): ");
 	    String clienteIdInput = sc.nextLine();
@@ -225,7 +246,6 @@ public class Program {
 	        return;
 	    }
 
-	    // Verifica se o cliente já tem empréstimos ativos
 	    if (Emprestimo_Dao.verificarEmprestimosAtivos(clienteId)) {
 	        System.out.println("O cliente já possui um empréstimo ativo. Não é possível registrar um novo empréstimo.");
 	        return;
@@ -239,14 +259,24 @@ public class Program {
 	        return;
 	    }
 
-	    // Registrar o empréstimo
+	    // Verifica e calcula a data de devolução
+	    LocalDate dataEmprestimoParsed;
+	    try {
+	        dataEmprestimoParsed = LocalDate.parse(dataEmprestimo, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+	    } catch (DateTimeParseException e) {
+	        System.out.println("Formato de data inválido. Use o formato YYYY-MM-DD.");
+	        return;
+	    }
+
+	    // Define um período de 14 dias para a devolução
+	    LocalDate dataDevolucao = dataEmprestimoParsed.plusDays(7);
+
+	    System.out.println("Empréstimo registrado! A data de devolução será: " + dataDevolucao);
+
 	    boolean sucesso = Emprestimo_Dao.registrarEmprestimo(livroId, clienteId, dataEmprestimo);
 
 	    if (sucesso) {
-	        // Atualiza o status do livro para "emprestado"
-	    	Emprestimo_Dao.atualizarStatusLivro(livroId, "emprestado");
-
-	        System.out.println("Empréstimo registrado com sucesso!");
+	        Emprestimo_Dao.atualizarStatusLivro(livroId, "emprestado");
 	        System.out.println("Deseja registrar outro empréstimo? (Digite 'sim' ou 'não')");
 	        String resposta = sc.nextLine();
 
@@ -269,7 +299,7 @@ public class Program {
 	        }
 	    }
 	}
-	
+
 	public static void registrarDevolucao() {
 
 		sc.nextLine();
@@ -283,6 +313,10 @@ public class Program {
         boolean sucesso = Emprestimo_Dao.devolverLivro(emprestimoId, dataDevolucao);
 
         if (sucesso) {
+        	
+        	int livroId = Emprestimo_Dao.obterLivroIdPorEmprestimoId(emprestimoId); 
+            Emprestimo_Dao.atualizarStatusLivro(livroId, "disponível");
+            
             System.out.println("Devolução registrada com sucesso!");
             
             System.out.println();
@@ -330,8 +364,7 @@ public class Program {
 	}
     
 	public static void consultarEmprestimosPorCliente() {
-		
-		sc.nextLine();
+	    sc.nextLine();
 	    System.out.print("Digite o nome ou ID do cliente (ou 'cancelar' para sair): ");
 	    String z = sc.nextLine();
 
@@ -348,43 +381,50 @@ public class Program {
 	        System.out.println("-----------------------------------------------------------");
 
 	        for (Emprestimos emprestimo : emprestimos) {
+	            LocalDate dataEmprestimoParsed = LocalDate.parse(emprestimo.getDataEmprestimo());
+	            LocalDate dataDevolucao = dataEmprestimoParsed.plusDays(7); // Calcula a data de devolução
 	            System.out.printf("%-5d %-30s %-20s %-20s%n",
 	                emprestimo.getId(),
 	                emprestimo.getLivroTitulo(),
 	                emprestimo.getDataEmprestimo(),
-	                emprestimo.getDataDevolucao() != null ? emprestimo.getDataDevolucao() : "Não devolvido");
+	                emprestimo.getDataDevolucao() != null ? emprestimo.getDataDevolucao() : dataDevolucao.toString()); // Usa a data de devolução calculada
 	        }
 	    }
 	}
+
+
 	
 	public static void consultarEmprestimosPorLivro() {
 
 		sc.nextLine();
 	    System.out.print("Digite o título ou ID do livro (ou 'cancelar' para sair): ");
-	    String input = sc.nextLine();
+	    String p = sc.nextLine();
 
-	    if (input.equalsIgnoreCase("cancelar")) {
+	    if (p.equalsIgnoreCase("cancelar")) {
 	        return;
 	    }
 
-	    List<Emprestimos> emprestimos = Emprestimo_Dao.consultarEmprestimosPorLivro(input);
+	    List<Emprestimos> emprestimos = Emprestimo_Dao.consultarEmprestimosPorLivro(p);
 
 	    if (emprestimos.isEmpty()) {
-	        System.out.println("Nenhum empréstimo encontrado para o livro.");
+	        System.out.println("Nenhum empréstimo encontrado para o cliente.");
 	    } else {
 	        System.out.printf("%-5s %-30s %-20s %-20s%n", "ID", "Cliente", "Data Empréstimo", "Data Devolução");
 	        System.out.println("-----------------------------------------------------------");
 
 	        for (Emprestimos emprestimo : emprestimos) {
+	            LocalDate dataEmprestimoParsed = LocalDate.parse(emprestimo.getDataEmprestimo());
+	            LocalDate dataDevolucao = dataEmprestimoParsed.plusDays(7); // Calcula a data de devolução
 	            System.out.printf("%-5d %-30s %-20s %-20s%n",
 	                emprestimo.getId(),
 	                emprestimo.getClienteNome(),
 	                emprestimo.getDataEmprestimo(),
-	                emprestimo.getDataDevolucao() != null ? emprestimo.getDataDevolucao() : "Não devolvido");
+	                emprestimo.getDataDevolucao() != null ? emprestimo.getDataDevolucao() : dataDevolucao.toString()); // Usa a data de devolução calculada
 	        }
 	    }
 	}
 
+	
 	// ÁREA DOS FUNCIONÁRIOS
 	public static void cabecalho_funcionarios() {
 
@@ -397,6 +437,8 @@ public class Program {
 	}
 
 	public static void opções_switch_funcionario() {
+		
+		try {
 		while (true) {
 			System.out.println("Digite uma opção:");
 			System.out.println("0 - Sair do sistema");
@@ -468,7 +510,10 @@ public class Program {
 				System.out.println("Opção inválida. Tente novamente.");
 				System.out.println();
 			}
-		}
+		}}catch (InputMismatchException e) {
+	        System.out.println("Entrada inválida. Por favor, digite um número.");
+	        sc.nextLine();
+	    }
 	}
 
 	public static void InserirFuncionario() {
@@ -904,6 +949,7 @@ public class Program {
 		}
 	}
 
+	
 	// ÁREA DOS CLIENTES
 	public static void cabecalho_clientes() {
 
@@ -916,8 +962,9 @@ public class Program {
 	}
 
 	public static void opções_switch_cliente() {
+		
+		try {
 		while (true) {
-
 			System.out.println("Digite uma opção:");
 			System.out.println("0 - Sair do sistema");
 			System.out.println("1 - Inserir Cliente");
@@ -988,7 +1035,10 @@ public class Program {
 				System.out.println("Opção inválida. Tente novamente.");
 				System.out.println();
 			}
-		}
+		}}catch (InputMismatchException e) {
+	        System.out.println("Entrada inválida. Por favor, digite um número.");
+	        sc.nextLine();
+	    }
 	}
 
 	public static void InserirCliente() {
@@ -1414,6 +1464,24 @@ public class Program {
 			}
 		}
 	}
+	
+	public static void exibirClientesEmOrdemAlfabetica() {
+	    List<Clientes> clientes = Cliente_Dao.listarClientesEmOrdemAlfabetica();
+	    
+	    System.out.printf("%-5s %-30s %-15s %-30s %-15s %-30s%n", "ID", "Nome", "CPF", "Email", "Telefone", "Endereço");
+	    System.out.println("------------------------------------------------------------------------------------------------------------");
+	    
+	    for (Clientes cliente : clientes) {
+	        System.out.printf("%-5d %-30s %-15s %-30s %-15s %-30s%n",
+	                          cliente.getId(),
+	                          cliente.getNome(),
+	                          cliente.getCpf(),
+	                          cliente.getEmail(),
+	                          cliente.getTelefone(),
+	                          cliente.getEndereco());
+	    }
+	}
+
 
 	// ÁREA DOS LIVROS
 	public static void cabecalho_Livros() {
@@ -1427,8 +1495,9 @@ public class Program {
 	}
 
 	public static void opções_switch_livro() {
+		
+		try {
 		while (true) {
-
 			System.out.println("Digite uma opção:");
 			System.out.println("0 - Sair do sistema");
 			System.out.println("1 - Inserir Livro");
@@ -1499,7 +1568,10 @@ public class Program {
 				System.out.println("Opção inválida. Tente novamente.");
 				System.out.println();
 			}
-		}
+		}}catch (InputMismatchException e) {
+	        System.out.println("Entrada inválida. Por favor, digite um número.");
+	        sc.nextLine();
+	    }
 	}
 
 	public static void InserirLivro() {
@@ -1911,6 +1983,20 @@ public class Program {
 				}
 			}
 		}
+	}
+	
+	public static void exibirLivrosEmOrdemAlfabetica() {
+	    List<Livros> livros = Livro_Dao.listarLivrosEmOrdemAlfabetica();
+
+	    System.out.printf("%-5s %-30s %-30s%n", "ID", "Título", "Status");
+	    System.out.println("------------------------------------------------");
+
+	    for (Livros livro : livros) {
+	        System.out.printf("%-5d %-30s %-30s%n",
+	                          livro.getId(),
+	                          livro.getTitulo(),
+	                          livro.getStatus());
+	    }
 	}
 
 }

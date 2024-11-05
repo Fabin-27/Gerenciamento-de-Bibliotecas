@@ -18,6 +18,10 @@ public class Clientes {
 		Endereco = endereco;
 	}
 
+	public Clientes() {
+		// TODO Auto-generated constructor stub
+	}
+
 	public int getId() {
 		return Id;
 	}

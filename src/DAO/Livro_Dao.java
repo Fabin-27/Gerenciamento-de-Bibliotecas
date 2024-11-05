@@ -37,34 +37,32 @@ public class Livro_Dao {
 	}
 
 	public void listarLivros() {
+	    String sql = "SELECT * FROM Livros";
 
-		
+	    try (Connection conn = DB.getConnection();
+	         PreparedStatement stmt = conn.prepareStatement(sql);
+	         ResultSet rs = stmt.executeQuery()) {
 
-		String sql = "SELECT * FROM Livros";
+	        System.out.printf("%-5s %-30s %-30s %-30s %-15s %-15s%n", "ID", "Título", "Autor", "ISBN", "Ano", "Status");
+	        System.out.println("-----------------------------------------------------------------------------------------------------------------------");
 
-		try (Connection conn = DB.getConnection();
-				PreparedStatement stmt = conn.prepareStatement(sql);
-				ResultSet rs = stmt.executeQuery()) {
+	        while (rs.next()) {
+	            System.out.printf("%-5d %-30s %-30s %-30s %-15s %-15s%n", 
+	                rs.getInt("id"), 
+	                rs.getString("titulo"),
+	                rs.getString("autor"), 
+	                rs.getString("ISBN"), 
+	                rs.getString("anoPublicacao"),
+	                rs.getString("status"));
+	            
+	            System.out.println();
+	        }
 
-			System.out.printf("%-5s %-30s %-30s %-30s %-15s%n", "ID", "Titulo", "Autor", "ISBN", "Ano");
-			System.out.println("---------------------------------------------------------------------------------------------------------");
-
-			while (rs.next()) {
-
-				System.out.printf("%-5d %-30s %-30s %-30s %-15s%n", rs.getInt("id"), rs.getString("titulo"),
-						rs.getString("autor"), rs.getString("ISBN"), rs.getString("anoPublicacao"));
-				
-				System.out.println();
-				System.out.println();
-				System.out.println();
-
-			}
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
 	}
+
 	
 	public static boolean deletarLivro(int id) {
 	    String sql = "DELETE FROM Livros WHERE id = ?";
@@ -144,6 +142,27 @@ public class Livro_Dao {
 		}
 		return livros;
 	}
+	
+	public static List<Livros> listarLivrosEmOrdemAlfabetica() {
+        List<Livros> livros = new ArrayList<>();
+        String sql = "SELECT * FROM Livros ORDER BY titulo ASC";
+
+        try (Connection conn = DB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Livros livro = new Livros();
+                livro.setId(rs.getInt("id"));
+                livro.setTitulo(rs.getString("titulo"));
+                livro.setStatus(rs.getString("status"));
+                livros.add(livro);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return livros;
+    }
 
 
 

@@ -17,7 +17,11 @@ public class Livros {
         this.status = status;
     }
     
-    public int getId() {
+    public Livros() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public int getId() {
 		return id;
 	}
 
@@ -69,5 +73,6 @@ public class Livros {
 	public void setStatus(String status) {
 		this.status = status;
 	}
+
 
 }

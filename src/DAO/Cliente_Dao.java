@@ -153,12 +153,39 @@ public class Cliente_Dao {
 		}
 		return clientes;
 	}
+	
+
+	    public static List<Clientes> listarClientesEmOrdemAlfabetica() {
+	        List<Clientes> clientes = new ArrayList<>();
+	        String sql = "SELECT * FROM Clientes ORDER BY nome ASC";
+
+	        try (Connection conn = DB.getConnection();
+	             PreparedStatement stmt = conn.prepareStatement(sql);
+	             ResultSet rs = stmt.executeQuery()) {
+
+	            while (rs.next()) {
+	                Clientes cliente = new Clientes();
+	                cliente.setId(rs.getInt("id"));
+	                cliente.setNome(rs.getString("nome"));
+	                cliente.setCpf(rs.getString("cpf"));
+	                cliente.setEmail(rs.getString("email"));
+	                cliente.setTelefone(rs.getString("telefone"));
+	                cliente.setEndereco(rs.getString("endereco"));
+	                clientes.add(cliente);
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	        return clientes;
+	    }
+	}
+
 
 	
 	
 
 	
 
-}
+
 
 

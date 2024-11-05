@@ -135,31 +135,30 @@ public class Emprestimo_Dao {
 	    }
 	}
 	
-	public static List<Emprestimos> consultarEmprestimosPorCliente(String clienteNomeOuId) {
+	public static List<Emprestimos> consultarEmprestimosPorCliente(String clienteIdOuNome) {
 	    List<Emprestimos> emprestimos = new ArrayList<>();
-	    String sql = "SELECT e.id, e.LivroId, e.ClienteId, e.dataEmprestimo, e.dataDevolucao, l.titulo AS livroTitulo " +
+	    String sql = "SELECT e.id, l.titulo AS livroTitulo, e.dataEmprestimo, e.dataDevolucao " +
 	                 "FROM Emprestimos e " +
-	                 "JOIN Clientes c ON e.ClienteId = c.id " +
-	                 "JOIN Livros l ON e.LivroId = l.id " +
-	                 "WHERE c.nome LIKE ? OR c.id = ?";
+	                 "JOIN Livros l ON e.livroId = l.id " +
+	                 "JOIN Clientes c ON e.clienteId = c.id " +
+	                 "WHERE c.nome = ? OR c.id = ?";
 
 	    try (Connection conn = DB.getConnection();
 	         PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-	        // Para buscar por nome ou ID
-	        stmt.setString(1, "%" + clienteNomeOuId + "%");
-	        stmt.setString(2, clienteNomeOuId);
-	        ResultSet rs = stmt.executeQuery();
+	        stmt.setString(1, clienteIdOuNome);
+	        stmt.setString(2, clienteIdOuNome);
 
-	        while (rs.next()) {
-	            Emprestimos emprestimo = new Emprestimos();
-	            emprestimo.setId(rs.getInt("id"));
-	            emprestimo.setLivroId(rs.getInt("LivroId"));
-	            emprestimo.setClienteId(rs.getInt("ClienteId"));
-	            emprestimo.setDataEmprestimo(rs.getString("dataEmprestimo"));
-	            emprestimo.setDataDevolucao(rs.getString("dataDevolucao"));
-	            emprestimo.setLivroTitulo(rs.getString("livroTitulo"));
-	            emprestimos.add(emprestimo);
+	        try (ResultSet rs = stmt.executeQuery()) {
+	            while (rs.next()) {
+	                Emprestimos emprestimo = new Emprestimos();
+	                emprestimo.setId(rs.getInt("id"));
+	                emprestimo.setLivroTitulo(rs.getString("livroTitulo"));
+	                emprestimo.setDataEmprestimo(rs.getString("dataEmprestimo"));
+	                emprestimo.setDataDevolucao(rs.getString("dataDevolucao")); // Adiciona a data de devolução
+
+	                emprestimos.add(emprestimo);
+	            }
 	        }
 	    } catch (SQLException e) {
 	        e.printStackTrace();
@@ -167,37 +166,89 @@ public class Emprestimo_Dao {
 
 	    return emprestimos;
 	}
+
 	
-	public static List<Emprestimos> consultarEmprestimosPorLivro(String livroTituloOuId) {
+	public static List<Emprestimos> consultarEmprestimosPorLivro(String livroIdOuTitulo) {
 	    List<Emprestimos> emprestimos = new ArrayList<>();
-	    String sql = "SELECT e.id, e.LivroId, e.ClienteId, e.dataEmprestimo, e.dataDevolucao, c.nome AS clienteNome " +
+	    String sql = "SELECT e.id, c.nome AS clienteNome, e.dataEmprestimo, e.dataDevolucao " +
 	                 "FROM Emprestimos e " +
-	                 "JOIN Livros l ON e.LivroId = l.id " +
-	                 "JOIN Clientes c ON e.ClienteId = c.id " +
-	                 "WHERE l.titulo LIKE ? OR l.id = ?";
+	                 "JOIN Livros l ON e.livroId = l.id " +
+	                 "JOIN Clientes c ON e.clienteId = c.id " +
+	                 "WHERE l.titulo = ? OR l.id = ?";
 
 	    try (Connection conn = DB.getConnection();
 	         PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-	        stmt.setString(1, "%" + livroTituloOuId + "%");
-	        stmt.setString(2, livroTituloOuId);
-	        ResultSet rs = stmt.executeQuery();
+	        stmt.setString(1, livroIdOuTitulo);
+	        stmt.setString(2, livroIdOuTitulo);
 
-	        while (rs.next()) {
-	            Emprestimos emprestimo = new Emprestimos();
-	            emprestimo.setId(rs.getInt("id"));
-	            emprestimo.setLivroId(rs.getInt("LivroId"));
-	            emprestimo.setClienteId(rs.getInt("ClienteId"));
-	            emprestimo.setDataEmprestimo(rs.getString("dataEmprestimo"));
-	            emprestimo.setDataDevolucao(rs.getString("dataDevolucao"));
-	            emprestimo.setClienteNome(rs.getString("clienteNome"));
-	            emprestimos.add(emprestimo);
+	        try (ResultSet rs = stmt.executeQuery()) {
+	            while (rs.next()) {
+	                Emprestimos emprestimo = new Emprestimos();
+	                emprestimo.setId(rs.getInt("id"));
+	                emprestimo.setClienteNome(rs.getString("clienteNome")); // Você pode precisar adicionar um método getClienteNome na classe Emprestimos
+	                emprestimo.setDataEmprestimo(rs.getString("dataEmprestimo"));
+	                emprestimo.setDataDevolucao(rs.getString("dataDevolucao")); // Adiciona a data de devolução
+
+	                emprestimos.add(emprestimo);
+	            }
 	        }
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	    }
 
 	    return emprestimos;
+	}
+
+
+	public static Integer obterLivroIdPorNome(String nomeLivro) {
+	    String sql = "SELECT id FROM Livros WHERE titulo = ?";
+	    try (Connection conn = DB.getConnection();
+	         PreparedStatement stmt = conn.prepareStatement(sql)) {
+	        stmt.setString(1, nomeLivro);
+	        ResultSet rs = stmt.executeQuery();
+	        if (rs.next()) {
+	            return rs.getInt("id");
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return null;
+	}
+
+	public static Integer obterClienteIdPorNome(String nomeCliente) {
+	    String sql = "SELECT id FROM Clientes WHERE nome = ?";
+	    try (Connection conn = DB.getConnection();
+	         PreparedStatement stmt = conn.prepareStatement(sql)) {
+	        stmt.setString(1, nomeCliente);
+	        ResultSet rs = stmt.executeQuery();
+	        if (rs.next()) {
+	            return rs.getInt("id");
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return null;
+	}
+	
+	public static Integer obterLivroIdPorEmprestimoId(int emprestimoId) {
+	    String sql = "SELECT LivroId FROM Emprestimos WHERE id = ?";
+	    Integer livroId = null;
+
+	    try (Connection conn = DB.getConnection();
+	         PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+	        stmt.setInt(1, emprestimoId);
+	        ResultSet rs = stmt.executeQuery();
+
+	        if (rs.next()) {
+	            livroId = rs.getInt("LivroId");
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return livroId;
 	}
 
 
