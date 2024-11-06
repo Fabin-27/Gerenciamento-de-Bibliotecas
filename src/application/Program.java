@@ -1027,14 +1027,8 @@ public class Program {
 	    } 
 	}
 
-
-	
-
 	public static void InserirCliente() {
-		
-		// cpf duplicado resolvido
-		
-		
+				
 	    try {
 	        sc.nextLine();
 
@@ -1114,12 +1108,11 @@ public class Program {
 	    }
 	}
 
-
-
-
 	public static void deletarClientePorId() {
 
 		sc.nextLine();
+		
+		exibirClientesEmOrdemAlfabetica();
 		System.out.print("Digite o ID do cliente que deseja deletar (ou 'cancelar' para sair): ");
 		String valor_id = sc.nextLine();
 
@@ -1144,11 +1137,11 @@ public class Program {
 
 				while (resposta_busca.equalsIgnoreCase("sim")) {
 
+					System.out.println();
+					System.out.println();
+					System.out.println();
+					
 					deletarClientePorId();
-
-					System.out.println();
-					System.out.println();
-					System.out.println();
 
 					if (resposta_busca.equalsIgnoreCase("nao")) {
 
@@ -1170,11 +1163,11 @@ public class Program {
 
 				while (resposta_busca.equalsIgnoreCase("sim")) {
 
+					System.out.println();
+					System.out.println();
+					System.out.println();
+					
 					deletarClientePorId();
-
-					System.out.println();
-					System.out.println();
-					System.out.println();
 
 					if (resposta_busca.equalsIgnoreCase("nao")) {
 
@@ -1192,6 +1185,9 @@ public class Program {
 	}
 
 	public static void editarClientePorId() {
+		
+		exibirClientesEmOrdemAlfabetica();
+		sc.nextLine();
 		System.out.print("Digite o ID do cliente que deseja editar (ou 'cancelar' para sair): ");
 		String valor_id = sc.nextLine();
 
@@ -1442,7 +1438,8 @@ public class Program {
 	}
 	
 	public static void exibirClientesEmOrdemAlfabetica() {
-	    List<Clientes> clientes = Cliente_Dao.listarClientesEmOrdemAlfabetica();
+	    
+		List<Clientes> clientes = Cliente_Dao.listarClientesEmOrdemAlfabetica();
 	    
 	    System.out.printf("%-5s %-30s %-15s %-30s %-15s %-30s%n", "ID", "Nome", "CPF", "Email", "Telefone", "Endereço");
 	    System.out.println("------------------------------------------------------------------------------------------------------------");
@@ -1458,7 +1455,7 @@ public class Program {
 	    }
 	}
 
-
+	
 	// ÁREA DOS LIVROS
 	public static void cabecalho_Livros() {
 

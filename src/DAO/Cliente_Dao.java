@@ -85,10 +85,14 @@ public class Cliente_Dao {
 	        int rowsDeleted = stmt.executeUpdate();
 	        return rowsDeleted > 0;
 
+	    } catch (SQLIntegrityConstraintViolationException e) {
+	        System.out.println("Não é possível excluir o cliente porque ele possui empréstimos ativos.");
+	        return false;
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	        return false;
 	    }
+	    
 		
 	}
 	
@@ -182,6 +186,29 @@ public class Cliente_Dao {
 	        }
 	        return clientes;
 	    }
+	
+	private static boolean isValidCPF(String cpf) {
+        // Regex para validar CPF no formato 000.000.000-00 ou apenas números
+        String cpfPattern = "\\d{11}|\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}";
+        return cpf.matches(cpfPattern);
+    }
+
+    private static boolean isValidEmail(String email) {
+        // Regex básica para validar email
+        String emailPattern = "^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$";
+        return email.matches(emailPattern);
+    }
+
+    private static boolean isValidTelefone(String telefone) {
+        // Regex para telefone com 10 ou 11 dígitos
+        String telefonePattern = "\\d{10,11}";
+        return telefone.matches(telefonePattern);
+    }
+	
+	
+	
+	
+	
 	}
 
 

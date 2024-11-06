@@ -63,7 +63,6 @@ public class Livro_Dao {
 	    }
 	}
 
-	
 	public static boolean deletarLivro(int id) {
 	    String sql = "DELETE FROM Livros WHERE id = ?";
 
